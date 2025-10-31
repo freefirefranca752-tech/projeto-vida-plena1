@@ -291,7 +291,7 @@
         flex-direction: column;
         position: absolute;
         top: 100%;
-        right: 0;
+        right: -100%;
         background-color: var(--bg-color);
         width: 250px;
         box-shadow: var(--shadow);
@@ -309,3 +309,4 @@
         color: var(--text-color);
     }
 }
+
