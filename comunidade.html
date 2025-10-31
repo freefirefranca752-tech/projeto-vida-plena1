@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidade - Projeto Vida Plena</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+ 
+</head>
+<body>
+    <script>
+        (function() {
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
+    <header class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo"> <i data-lucide="leaf"></i> Vida Plena </a>
+            <nav class="main-nav" id="main-nav">
+                <ul class="nav-links" id="main-nav-links">
+                    <li><a href="index.html#pilares">Projeto</a></li>
+                    <li><a href="index.html#desafios">Desafios</a></li>
+                    <li><a href="index.html#metodologia">Metodologia</a></li>
+                    <li><a href="index.html#artigos">Destaques</a></li>
+                    <li><a href="comunidade.html">Comunidade</a></li>
+                    <li><a href="index.html#evento">Evento</a></li>
+                    <li><a href="index.html#sobre">Equipe</a></li>
+                </ul>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu"> <i data-lucide="menu"></i> </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>Nossa Comunidade</h1>
+                <p>Um ecossistema de conhecimento e inspiração. Explore artigos, baixe e-books e participe de debates para uma vida mais plena.</p>
+            </div>
+        </section>
+
+        <section class="community-content">
+            <div class="container">
+                
+                <div class="search-bar-container">
+                    <i data-lucide="search" class="search-icon"></i>
+                    <input type="search" id="community-search-bar" placeholder="Pesquisar artigos, e-books e tópicos...">
+                </div>
+
+                <div id="tabs-container">
+                    <div class="tabs-nav">
+                        <button class="tab-btn active" data-tab="artigos"> <i data-lucide="file-text"></i> Artigos</button>
+                        <button class="tab-btn" data-tab="ebooks"> <i data-lucide="book-open"></i> E-books</button>
+                        <button class="tab-btn" data-tab="forum"> <i data-lucide="messages-square"></i> Fórum de Debates</button>
+                    </div>
+
+                    <div class="tab-content active" id="artigos-content">
+                        <div class="publish-area">
+                            <h2>Compartilhe seu Conhecimento</h2>
+                            <p style="margin-bottom: 20px;">Inspire outras pessoas com sua jornada e suas descobertas.</p>
+                            <button class="btn btn-primary" id="open-modal-btn">Publique seu Artigo</button>
+                        </div>
+                        <div class="articles-feed">
+                            <div id="articles-container">
+                                <p>Carregando artigos...</p>
+                            </div>
+                            <div class="pagination-controls" id="artigos-pagination"></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content content-section" id="ebooks-content">
+                        <h2>Nossos E-books Exclusivos</h2>
+                        <div class="publish-area">
+                            <button class="btn btn-primary" id="open-ebook-modal-btn">
+                                <i data-lucide="plus-circle" style="width:18px; margin-right: 8px;"></i> Publique seu E-book
+                            </button>
+                            <p style="margin-top: 10px; font-size: 0.9em; color: var(--text-light);">Compartilhe seu e-book com a comunidade.</p>
+                        </div>
+                        <div class="ebook-gallery" id="ebooks-container">
+                            <p>Carregando e-books...</p>
+                        </div>
+                        <div class="pagination-controls" id="ebooks-pagination"></div>
+                    </div>
+
+                    <div class="tab-content content-section" id="forum-content">
+                        <h2>Fórum de Debates</h2>
+                        <div class="publish-area">
+                            <button class="btn btn-primary" id="open-new-topic-modal-btn">
+                                <i data-lucide="plus-circle" style="width:18px; margin-right: 8px;"></i> Criar Novo Tópico
+                            </button>
+                            <p style="margin-top: 10px; font-size: 0.9em; color: var(--text-light);">Crie um tema e compartilhe o link de um grupo do WhatsApp para discussão.</p>
+                        </div>
+                        <div class="forum-list" id="forum-topics-list">
+                            <p>Carregando tópicos...</p>
+                        </div>
+                        <div class="pagination-controls" id="forum-pagination"></div>
+                    </div>
+                </div> <div id="search-results-container">
+                    <h2>Resultados da Busca</h2>
+                    <div class="search-results-list" id="search-results-list">
+                        </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <div id="submission-modal" class="modal-overlay">
+        <div class="modal-content" data-mode="new-article">
+            <button id="close-modal-btn" class="modal-close" aria-label="Fechar modal"><i data-lucide="x"></i></button>
+            <h2 id="article-modal-title">Publique seu Artigo</h2>
+            <div class="submission-form">
+                <form id="article-form">
+                    <div class="form-group">
+                        <label for="title">Título do Artigo</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Descrição Curta (Introdução)</label>
+                        <textarea id="description" name="description" rows="3" placeholder="Escreva 1-2 frases sobre o que trata o artigo..." maxlength="200"></textarea>
+                        <small style="font-size: 0.8em; color: var(--text-light); margin-top: 5px;">Aparecerá abaixo do autor no card (máx 200 caracteres).</small>
+                    </div>
+                    <div class="form-group form-group-cover-file">
+                        <label for="cover-image-file">Imagem da Capa (Opcional)</label>
+                        <input type="file" id="cover-image-file" name="cover-image-file" accept="image/png, image/jpeg" aria-describedby="coverFileHelp">
+                        <small id="coverFileHelp" style="font-size: 0.8em; color: var(--text-light); margin-top: 5px;">Apenas JPG ou PNG (máx 2MB).</small>
+                    </div>
+                    <div class="form-group form-group-file">
+                        <label for="pdf-file">Seu Artigo (PDF)</label>
+                        <input type="file" id="pdf-file" name="pdf-file" accept=".pdf" required aria-describedby="fileHelp">
+                        <small id="fileHelp" style="font-size: 0.8em; color: var(--text-light); margin-top: 5px;">Apenas arquivos .pdf são aceitos (máx 10MB).</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="submit-button">Enviar Artigo</button>
+                </form>
+                <div id="feedback-message"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="new-topic-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-new-topic-modal-btn" class="modal-close" aria-label="Fechar modal"><i data-lucide="x"></i></button>
+            <h2 id="topic-modal-title">Criar Novo Tópico</h2>
+            <div class="submission-form">
+                <form id="new-topic-form">
+                    <div class="form-group">
+                        <label for="topic-title">Título do Tópico</label>
+                        <input type="text" id="topic-title" name="topic-title" placeholder="Ex: Dicas de Receitas Saudáveis" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="whatsapp-link">Link do Grupo WhatsApp</label>
+                        <input type="url" id="whatsapp-link" name="whatsapp-link" placeholder="https://chat.whatsapp.com/..." required pattern="https://chat\.whatsapp\.com/.*">
+                         <small style="font-size: 0.8em; color: var(--text-light); margin-top: 5px;">Copie e cole o link de convite do seu grupo.</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="submit-topic-button">Criar Tópico</button>
+                </form>
+                <div id="topic-feedback-message"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="ebook-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-ebook-modal-btn" class="modal-close" aria-label="Fechar modal"><i data-lucide="x"></i></button>
+            <h2 id="ebook-modal-title">Publique seu E-book</h2>
+            <div class="submission-form">
+                <form id="ebook-form">
+                    <div class="form-group">
+                        <label for="ebook-title">Título do E-book</label>
+                        <input type="text" id="ebook-title" name="ebook-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ebook-cover-image">Imagem da Capa (JPG, PNG)</label>
+                        <input type="file" id="ebook-cover-image" name="ebook-cover-image" accept="image/jpeg, image/png" required aria-describedby="coverHelp">
+                        <small id="coverHelp" style="font-size: 0.8em; color: var(--text-light); margin-top: 5px;">A capa é obrigatória (máx 5MB).</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="ebook-pdf-file">Seu E-book (PDF)</label>
+                        <input type="file" id="ebook-pdf-file" name="ebook-pdf-file" accept=".pdf" required aria-describedby="pdfHelp">
+                        <small id="pdfHelp" style="font-size: 0.8em; color: var(--text-light); margin-top: 5px;">Apenas arquivos .pdf (máx 15MB).</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="submit-ebook-button">Enviar E-book</button>
+                </form>
+                <div id="ebook-feedback-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="message-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-message-modal-btn" class="modal-close" aria-label="Fechar modal"><i data-lucide="x"></i></button>
+            <h2 id="message-modal-title">Enviar Mensagem</h2>
+            <div class="submission-form">
+                <form id="message-form" data-receiver-id="">
+                    <p id="message-modal-intro" style="font-size: 0.9em; color: var(--text-light); margin-bottom: 15px;">
+                        Sua mensagem será enviada para o autor deste artigo.
+                    </p>
+                    <div class="form-group">
+                        <label for="message-content">Sua Mensagem</label>
+                        <textarea id="message-content" name="message-content" rows="5" placeholder="Escreva sua mensagem..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="submit-message-button">Enviar Mensagem</button>
+                </form>
+                <div id="message-feedback-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="report-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-report-modal-btn" class="modal-close" aria-label="Fechar modal"><i data-lucide="x"></i></button>
+            <h2 id="report-modal-title">Denunciar Conteúdo</h2>
+            <div class="submission-form">
+                <form id="report-form" data-content-type="" data-content-id="" data-content-link="">
+                    <p id="report-modal-intro" style="font-size: 0.9em; color: var(--text-light); margin-bottom: 15px;">
+                        Você está denunciando: <strong><span id="report-content-name"></span></strong>
+                    </p>
+                    <div class="form-group">
+                        <label for="report-reason">Motivo da denúncia</label>
+                        <textarea id="report-reason" name="report-reason" rows="5" placeholder="Por favor, descreva por que este conteúdo é inadequado (ex: desinformação, spam, discurso de ódio...)" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-danger" id="submit-report-button">Enviar Denúncia</button>
+                </form>
+                <div id="report-feedback-message"></div>
+            </div>
+        </div>
+    </div>
+    <footer class="main-footer">
+        <div class="container">
+              <div class="footer-top">
+                  <div class="footer-col footer-about">
+                       <a href="index.html" class="logo"> <i data-lucide="leaf"></i> Vida Plena </a>
+                      <p>Um projeto de TCC para uma vida mais saudável, combatendo o sedentarismo e a desinformação.</p>
+                  </div>
+                  <div class="footer-col">
+                      <h4>Navegação</h4>
+                      <ul>
+                          <li><a href="index.html#pilares">Projeto</a></li>
+                          <li><a href="index.html#desafios">Desafios</a></li>
+                      </ul>
+                  </div>
+                  <div class="footer-col">
+                      <h4>Links Úteis</h4>
+                      <ul>
+                           <li><a href="index.html#sobre">Equipe</a></li>
+                          <li><a href="index.html#evento">Evento</a></li>
+                      </ul>
+                  </div>
+                  <div class="footer-col">
+                      <h4>Siga-nos</h4>
+                      <div class="footer-social">
+                          <a href="https://www.instagram.com/tcc.adm.24/" target="_blank" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+                          <a href="#" aria-label="Facebook"><i data-lucide="facebook"></i></a>
+                      </div>
+                  </div>
+            </div>
+            <div class="footer-bottom"> <p>&copy; 2025 Projeto Vida Plena. Todos os direitos reservados.</p> </div>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+        const menuToggle = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('main-nav-links');
+        if(menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                icon.setAttribute('data-lucide', navLinks.classList.contains('active') ? 'x' : 'menu');
+                lucide.createIcons();
+            });
+        }
+        
+        // Modal de Tópico
+        const newTopicModal = document.getElementById('new-topic-modal');
+        const openNewTopicModalBtn = document.getElementById('open-new-topic-modal-btn');
+        const closeNewTopicModalBtn = document.getElementById('close-new-topic-modal-btn');
+
+        if(newTopicModal && openNewTopicModalBtn && closeNewTopicModalBtn){
+            openNewTopicModalBtn.addEventListener('click', () => {
+                newTopicModal.classList.add('visible');
+            });
+        }
+
+        // Lógica do Modal de E-book
+        const ebookModal = document.getElementById('ebook-modal');
+        const openEbookModalBtn = document.getElementById('open-ebook-modal-btn');
+        const closeEbookModalBtn = document.getElementById('close-ebook-modal-btn');
+
+        if(ebookModal && openEbookModalBtn && closeEbookModalBtn){
+            openEbookModalBtn.addEventListener('click', () => {
+                ebookModal.classList.add('visible');
+            });
+        }
+
+        // Lógica do Modal de Mensagem
+        const messageModal = document.getElementById('message-modal');
+        const closeMessageModalBtn = document.getElementById('close-message-modal-btn');
+        if (messageModal && closeMessageModalBtn) {
+            closeMessageModalBtn.addEventListener('click', () => {
+                messageModal.classList.remove('visible');
+            });
+            messageModal.addEventListener('click', (e) => {
+                if(e.target === messageModal) {
+                    messageModal.classList.remove('visible');
+                }
+            });
+        }
+        
+        // [NOVO] Lógica do Modal de Denúncia
+        const reportModal = document.getElementById('report-modal');
+        const closeReportModalBtn = document.getElementById('close-report-modal-btn');
+        if (reportModal && closeReportModalBtn) {
+            closeReportModalBtn.addEventListener('click', () => {
+                reportModal.classList.remove('visible');
+            });
+            reportModal.addEventListener('click', (e) => {
+                if(e.target === reportModal) {
+                    reportModal.classList.remove('visible');
+                }
+            });
+        }
+    });
+    </script>
+
+
+    <script type="module">
+        const { createClient } = supabase;
+        const SUPABASE_URL = 'https://iuyapkycjgmyvxlpycdd.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1eWFwa3ljamdteXZ4bHB5Y2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExMTYwODUsImV4cCI6MjA3NjY5MjA4NX0.VlLOoSnNvaWoMFtof6zaLUgWC60bCBJT_ckdI7GRFkM';
+        
+        const BUCKET_ARTIGOS = 'community-articles';
+        const TABELA_ARTIGOS = 'community-articles';
+
+        const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+        
+        let allTopicsCache = [];
+        let allEbooksCache = [];
+        let allArticlesCache = [];
+        let commentsByArticle = {};
+        let likedArticleIds = new Set();
+        let commentsByIdMap = {};
+
+        const ITEMS_PER_PAGE = 12;
+        let currentPage = {
+            artigos: 1,
+            ebooks: 1,
+            forum: 1
+        };
+        let currentTab = 'artigos';
+        let currentSearchTerm = '';
+        
+        const searchBar = document.getElementById('community-search-bar');
+        const tabsContainer = document.getElementById('tabs-container');
+        const searchResultsContainer = document.getElementById('search-results-container');
+        const searchResultsList = document.getElementById('search-results-list');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        const articlesContainer = document.getElementById('articles-container');
+        const articlesPagination = document.getElementById('artigos-pagination');
+        const ebooksContainer = document.getElementById('ebooks-container');
+        const ebooksPagination = document.getElementById('ebooks-pagination');
+        const forumListContainer = document.getElementById('forum-topics-list');
+        const forumPagination = document.getElementById('forum-pagination');
+        
+        const newTopicForm = document.getElementById('new-topic-form');
+        const topicFeedbackMessage = document.getElementById('topic-feedback-message');
+        const submitTopicButton = document.getElementById('submit-topic-button');
+        const newTopicModalElement = document.getElementById('new-topic-modal');
+        const topicModalTitle = document.getElementById('topic-modal-title');
+        const closeNewTopicModalBtn = document.getElementById('close-new-topic-modal-btn');
+        const openNewTopicModalBtn = document.getElementById('open-new-topic-modal-btn');
+        
+        const ebookForm = document.getElementById('ebook-form');
+        const submitEbookButton = document.getElementById('submit-ebook-button');
+        const ebookFeedbackMessage = document.getElementById('ebook-feedback-message');
+        const ebookModalElement = document.getElementById('ebook-modal');
+        const closeEbookModalBtn = document.getElementById('close-ebook-modal-btn');
+
+        const articleForm = document.getElementById('article-form');
+        const articleModal = document.getElementById('submission-modal');
+        const articleModalContent = articleModal?.querySelector('.modal-content');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const submitButton = document.getElementById('submit-button');
+        const articleModalTitle = document.getElementById('article-modal-title');
+        const pdfFileInput = document.getElementById('pdf-file');
+        const pdfFileHelp = document.getElementById('fileHelp');
+        const coverImageInput = document.getElementById('cover-image-file');
+        const descriptionInput = document.getElementById('description'); 
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        const messageModal = document.getElementById('message-modal');
+        const messageForm = document.getElementById('message-form');
+        const messageContentInput = document.getElementById('message-content');
+        const messageFeedback = document.getElementById('message-feedback-message');
+        const submitMessageButton = document.getElementById('submit-message-button');
+        const messageModalIntro = document.getElementById('message-modal-intro');
+
+        // [NOVO] Seletores do Modal de Denúncia
+        const reportModal = document.getElementById('report-modal');
+        const reportForm = document.getElementById('report-form');
+        const reportFeedback = document.getElementById('report-feedback-message');
+        const reportContentName = document.getElementById('report-content-name');
+        const reportReasonInput = document.getElementById('report-reason');
+        const submitReportButton = document.getElementById('submit-report-button');
+
+
+        // ########## 1. LÓGICA DE BUSCA E RENDERIZAÇÃO PRINCIPAL ##########
+
+        function renderUI() {
+            currentSearchTerm = searchBar.value.trim().toLowerCase();
+            
+            if (currentSearchTerm.length > 0) {
+                tabsContainer.style.display = 'none';
+                searchResultsContainer.style.display = 'block';
+                renderSearchResults(currentSearchTerm);
+            } else {
+                tabsContainer.style.display = 'block';
+                searchResultsContainer.style.display = 'none';
+                renderPaginatedTabContent();
+            }
+            lucide.createIcons(); 
+        }
+        
+        function renderSearchResults(term) {
+            let results = [];
+            
+            allArticlesCache
+                .filter(article => article.title.toLowerCase().includes(term) || (article.description && article.description.toLowerCase().includes(term)))
+                .forEach(article => results.push({
+                    id: article.id,
+                    title: article.title,
+                    desc: article.description || `Por: ${article.author_name}`,
+                    url: `${window.location.pathname}?article=${article.id}`, 
+                    type: 'Artigo',
+                    icon: 'file-text'
+                }));
+                
+            allEbooksCache
+                .filter(ebook => ebook.title.toLowerCase().includes(term))
+                .forEach(ebook => results.push({
+                    id: ebook.id,
+                    title: ebook.title,
+                    desc: `Por: ${ebook.author_name}`,
+                    url: ebook.pdf_url, 
+                    type: 'E-book',
+                    icon: 'book-open'
+                }));
+
+            allTopicsCache
+                .filter(topic => topic.title.toLowerCase().includes(term))
+                .forEach(topic => results.push({
+                    id: topic.id,
+                    title: topic.title,
+                    desc: 'Tópico de debate no WhatsApp',
+                    url: topic.whatsapp_link, 
+                    type: 'Fórum',
+                    icon: 'messages-square'
+                }));
+            
+            if (results.length === 0) {
+                searchResultsList.innerHTML = `<p style="text-align: center;">Nenhum resultado encontrado para "${term}".</p>`;
+                return;
+            }
+            
+            searchResultsList.innerHTML = results.map(item => `
+                <a href="${item.url}" ${item.type !== 'Artigo' ? 'target="_blank" rel="noopener noreferrer"' : ''} class="search-result-item" data-id="${item.id}" data-type="${item.type}">
+                    <i data-lucide="${item.icon}" class="icon"></i>
+                    <div class="result-details">
+                        <h3>${item.title}</h3>
+                        <p>${item.desc}</p>
+                    </div>
+                    <span class="result-type-badge">${item.type}</span>
+                </a>
+            `).join('');
+        }
+        
+        function renderPaginatedTabContent() {
+            let cache, container, renderFn, paginationContainer;
+
+            switch(currentTab) {
+                case 'ebooks':
+                    cache = allEbooksCache;
+                    container = ebooksContainer;
+                    renderFn = renderEbooksHTML;
+                    paginationContainer = ebooksPagination;
+                    break;
+                case 'forum':
+                    cache = allTopicsCache;
+                    container = forumListContainer;
+                    renderFn = renderForumTopicsHTML;
+                    paginationContainer = forumPagination;
+                    break;
+                case 'artigos':
+                default:
+                    cache = allArticlesCache;
+                    container = articlesContainer;
+                    renderFn = renderArticlesHTML; 
+                    paginationContainer = articlesPagination;
+                    break;
+            }
+            
+            const page = currentPage[currentTab];
+            const totalItems = cache.length;
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            const start = (page - 1) * ITEMS_PER_PAGE;
+            const end = page * ITEMS_PER_PAGE;
+            
+            const itemsToRender = cache.slice(start, end);
+            
+            if (container) {
+                renderFn(itemsToRender, container);
+            }
+            
+            if (paginationContainer) {
+                renderPaginationControls(paginationContainer, page, totalPages);
+            }
+        }
+        
+        function renderPaginationControls(container, activePage, totalPages) {
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            let html = '';
+            html += `<button class="page-btn" data-page="${activePage - 1}" ${activePage === 1 ? 'disabled' : ''}>&lt;</button>`;
+            
+            const maxPagesToShow = 5;
+            let startPage = Math.max(1, activePage - Math.floor(maxPagesToShow / 2));
+            let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+
+            if (startPage > 1) {
+                html += `<button class="page-btn" data-page="1">1</button>`;
+                if (startPage > 2) {
+                     html += `<button class="page-btn" disabled>...</button>`;
+                }
+            }
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button class="page-btn ${i === activePage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+            }
+             if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                     html += `<button class="page-btn" disabled>...</button>`;
+                }
+                html += `<button class="page-btn" data-page="${totalPages}">${totalPages}</button>`;
+            }
+            
+            html += `<button class="page-btn" data-page="${activePage + 1}" ${activePage === totalPages ? 'disabled' : ''}>&gt;</button>`;
+            container.innerHTML = html;
+        }
+
+        // ########## 2. FUNÇÕES DE RENDERIZAÇÃO DE HTML (Separadas) ##########
+        
+        function renderArticlesHTML(articles, container) {
+            if (articles.length === 0) {
+                 container.innerHTML = currentTab === 'artigos' ? '<p style="text-align: center;">Nenhum artigo encontrado.</p>' : '';
+                 return;
+            }
+            
+            container.innerHTML = ''; 
+            
+            articles.forEach(article => {
+                const articleComments = commentsByArticle[article.id] || [];
+                const userHasLiked = likedArticleIds.has(article.id);
+                const isAuthor = currentUser && currentUser.id === article.author_id;
+
+                let adminButtonsHtml = '';
+                if (isAuthor) {
+                    adminButtonsHtml = `
+                        <button class="btn btn-secondary btn-icon edit-article-btn" data-article-id="${article.id}" aria-label="Editar artigo">
+                            <i data-lucide="edit-2"></i>
+                        </button>
+                        <button class="btn btn-danger btn-icon delete-article-btn" data-article-id="${article.id}" aria-label="Excluir artigo">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    `;
+                }
+                
+                let messageButtonHtml = '';
+                if (!isAuthor && currentUser) {
+                    messageButtonHtml = `
+                        <button class="action-btn message-author-btn" data-author-id="${article.author_id}" data-author-name="${article.author_name || 'o autor'}">
+                            <i data-lucide="message-circle"></i> 
+                            <span>Conversar</span>
+                        </button>
+                    `;
+                }
+                
+                const coverImageHtml = article.cover_image_url 
+                    ? `<img src="${article.cover_image_url}" alt="Capa do artigo ${article.title}" class="article-cover">` 
+                    : '';
+
+                const card = document.createElement('div');
+                card.className = 'article-card';
+                card.dataset.articleId = article.id;
+                
+                card.innerHTML = `
+                    ${coverImageHtml} <h3><a href="${article.pdfUrl || '#'}" target="_blank">${article.title}</a></h3>
+                    <p class="author">Por: ${article.author_name || 'Usuário Anônimo'} em ${new Date(article.created_at).toLocaleDateString()}</p>
+                    <p class="article-description">${article.description || ''}</p>
+                    <div class="article-actions">
+                        <button class="action-btn like-btn ${userHasLiked ? 'liked' : ''}"><i data-lucide="thumbs-up"></i> <span class="like-count">${article.likes || 0}</span></button>
+                        <button class="action-btn comment-toggle-btn"><i data-lucide="message-square"></i> <span>${articleComments.length} Comentários</span></button>
+                        <button class="action-btn share-btn" data-title="${article.title}" data-id="${article.id}"><i data-lucide="share-2"></i> <span>Compartilhar</span></button>
+                        ${messageButtonHtml}
+                        <div class="article-admin-actions">
+                            ${adminButtonsHtml}
+                        </div>
+                        <button class="report-btn" data-content-type="article" data-content-id="${article.id}" data-content-name="${article.title}">
+                            <i data-lucide="alert-octagon"></i> <span>Denunciar</span>
+                        </button>
+                    </div>
+                    <div class="comments-section">
+                        <h4>Comentários</h4>
+                        <div class="comments-list"></div>
+                        <form class="comment-form" data-article-id="${article.id}" data-article-author-id="${article.author_id}" data-article-title="${article.title}">
+                            <input type="text" placeholder="Adicione um comentário..." required>
+                            <button type="submit" class="btn btn-primary">Enviar</button>
+                        </form>
+                    </div>`;
+                container.appendChild(card);
+                renderComments(articleComments, card.querySelector('.comments-list'), commentsByIdMap);
+            });
+        }
+        
+        function renderEbooksHTML(ebooks, container) {
+            if (ebooks.length === 0) {
+                container.innerHTML = '<p style="text-align: center; width: 100%; grid-column: 1 / -1;">Nenhum e-book encontrado.</p>';
+                return;
+            }
+            container.innerHTML = ebooks.map(ebook => {
+                let adminButtonsHtml = '';
+                if (currentUser && currentUser.id === ebook.author_id) {
+                    adminButtonsHtml = `
+                        <button class="btn btn-secondary btn-icon edit-ebook-btn" data-ebook-id="${ebook.id}" aria-label="Editar e-book">
+                            <i data-lucide="edit-2"></i>
+                        </button>
+                        <button class="btn btn-danger btn-icon delete-ebook-btn" data-ebook-id="${ebook.id}" aria-label="Excluir e-book">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    `;
+                }
+                const authorDisplayName = ebook.author_name || 'Usuário Anônimo';
+                return `
+                <div class="ebook-card" data-ebook-id="${ebook.id}">
+                    <img src="${ebook.cover_image_url}" alt="Capa do e-book ${ebook.title}">
+                    <h3>${ebook.title}</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 10px;">
+                        Por: ${authorDisplayName}
+                    </p>
+                    <a href="${ebook.pdf_url}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                        Baixar Agora
+                    </a>
+                    <div class="ebook-actions">
+                        ${adminButtonsHtml}
+                        <button class="btn-icon report-btn" data-content-type="ebook" data-content-id="${ebook.id}" data-content-name="${ebook.title}" aria-label="Denunciar e-book">
+                            <i data-lucide="alert-octagon"></i>
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderForumTopicsHTML(topics, container) {
+            if (topics.length === 0) {
+                container.innerHTML = '<p style="text-align: center;">Nenhum tópico encontrado.</p>';
+                return;
+            }
+            container.innerHTML = topics.map(topic => {
+                let adminButtonsHtml = '';
+                if (currentUser && currentUser.id === topic.created_by) {
+                    adminButtonsHtml = `
+                        <button class="btn btn-secondary btn-icon edit-topic-btn" data-topic-id="${topic.id}" aria-label="Editar tópico">
+                            <i data-lucide="edit-2"></i>
+                        </button>
+                        <button class="btn btn-danger btn-icon delete-topic-btn" data-topic-id="${topic.id}" aria-label="Excluir tópico">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    `;
+                }
+                const topicAuthorName = 'Usuário'; // [TODO] Precisamos buscar o nome do autor
+                return `
+                <div class="forum-topic" data-topic-id="${topic.id}">
+                    <div class="forum-icon"><i data-lucide="message-circle"></i></div>
+                    <div class="forum-details">
+                        <h3>${topic.title}</h3>
+                        <p class="forum-meta">Criado por <strong>${topicAuthorName}</strong> em ${new Date(topic.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <div class="topic-actions">
+                        <a href="${topic.whatsapp_link}" target="_blank" class="btn btn-primary">
+                            <i data-lucide="external-link" style="width: 16px; margin-right: 5px;"></i> Entrar
+                        </a>
+                        ${adminButtonsHtml}
+                        <button class="btn-icon report-btn" data-content-type="topic" data-content-id="${topic.id}" data-content-name="${topic.title}" aria-label="Denunciar tópico">
+                            <i data-lucide="alert-octagon"></i>
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+        
+        function renderComments(comments, container, commentsByIdMap) {
+            if(!container) return;
+            container.innerHTML = comments.length === 0 ? '<p style="font-size: 0.9em; color: var(--text-light);">Nenhum comentário ainda.</p>' : '';
+            (comments || []).forEach(comment => {
+                container.appendChild(createCommentElement(comment, commentsByIdMap));
+            });
+        }
+
+        function createCommentElement(comment, commentsByIdMap) {
+            const div = document.createElement('div');
+            div.className = 'comment';
+            div.id = `comment-${comment.id}`;
+            div.setAttribute('data-comment-id', comment.id);
+            div.setAttribute('data-comment-author-id', comment.user_id);
+            const commentAuthorName = comment.profiles?.full_name || comment.profiles?.email || 'Usuário';
+            const avatarUrl = comment.profiles?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(commentAuthorName[0] || 'U')}`;
+            let quoteHtml = '';
+            if (comment.parent_comment_id && typeof comment.parent_comment_id === 'object') {
+                const parentComment = comment.parent_comment_id;
+                if (parentComment && parentComment.profiles) {
+                    const parentAuthorName = parentComment.profiles.full_name || parentComment.profiles.email || 'Usuário';
+                    let parentContent = parentComment.content || '';
+                    if (parentContent.length > 70) parentContent = parentComment.substring(0, 70) + '...';
+                    quoteHtml = `<div class="comment-quote"><p class="comment-quote-author">@${parentAuthorName}</p><p class="comment-quote-content">${parentContent}</p></div>`;
+                }
+            } else if (comment.parent_comment_id) {
+                 const parentCommentFromMap = commentsByIdMap[comment.parent_comment_id];
+                 if(parentCommentFromMap) {
+                     let parentContent = parentCommentFromMap.content || '';
+                     if (parentContent.length > 70) parentContent = parentComment.substring(0, 70) + '...';
+                     quoteHtml = `<div class="comment-quote"><p class="comment-quote-author">@Usuário</p><p class="comment-quote-content">${parentContent}</p></div>`;
+                 }
+            }
+            let adminActions = '';
+            if (currentUser && comment.user_id === currentUser.id) {
+                adminActions = `<button class="comment-action-btn edit-comment-btn">Editar</button><button class="comment-action-btn delete-comment-btn delete">Excluir</button>`;
+            }
+            div.innerHTML = `
+                <img src="${avatarUrl}" alt="avatar" class="comment-avatar">
+                <div class="comment-body">
+                    <p class="comment-author">${commentAuthorName}</p>
+                    ${quoteHtml}
+                    <p class="comment-content">${comment.content}</p>
+                    <div class="comment-actions">
+                        <button class="comment-action-btn reply-comment-btn">Responder</button>
+                        ${adminActions}
+                        <button class="comment-action-btn report-comment-btn report-btn" data-content-type="comment" data-content-id="${comment.id}" data-content-name="Comentário de ${commentAuthorName}">
+                            <i data-lucide="alert-octagon" style="width:14px; height: 14px;"></i>
+                        </button>
+                    </div>
+                    <div class="reply-form-container"></div>
+                    <div class="edit-form-container"></div>
+                </div>`;
+            return div;
+        }
+
+
+        // ########## 3. FUNÇÕES DE FETCH DE DADOS (Refatoradas) ##########
+        
+        async function fetchArticlesAndComments() {
+            const { data: articles, error: articlesError } = await sb.from(TABELA_ARTIGOS).select('*').order('created_at', { ascending: false });
+            if (articlesError) {
+                console.error("Erro ao buscar artigos:", articlesError);
+                if(articlesContainer) articlesContainer.innerHTML = '<p>Ocorreu um erro ao carregar os artigos.</p>';
+                return;
+            }
+            allArticlesCache = articles || [];
+
+            const { data: comments, error: commentsError } = await sb
+                .from('comments')
+                .select(`id, content, created_at, article_id, user_id, profiles ( full_name, avatar_url, email ), parent_comment_id (id, content, profiles ( full_name, email ))`)
+                .order('created_at', { ascending: true });
+            if (commentsError) console.error("Erro ao buscar comentários:", commentsError);
+
+            if(currentUser) { 
+                const { data: userLikes, error: likesError } = await sb.from('article_likes').select('article_id').eq('user_id', currentUser.id);
+                if (likesError) console.error("Erro ao buscar likes:", likesError);
+                likedArticleIds = new Set((userLikes || []).map(like => like.article_id));
+            }
+             
+            commentsByArticle = (comments || []).reduce((acc, comment) => {
+                (acc[comment.article_id] = acc[comment.article_id] || []).push(comment);
+                return acc;
+            }, {});
+             commentsByIdMap = (comments || []).reduce((map, comment) => {
+                 map[comment.id] = comment;
+                 return map;
+             }, {});
+        }
+        
+        async function fetchEbooks() {
+            const { data: ebooks, error } = await sb.from('ebooks').select('*').order('created_at', { ascending: false });
+            if (error) {
+                console.error("Erro ao buscar e-books:", error);
+                if(ebooksContainer) ebooksContainer.innerHTML = `<p style="color: var(--danger-color); text-align: center; width: 100%; grid-column: 1 / -1;">Erro ao carregar e-books: ${error.message}</p>`;
+                return;
+            }
+            allEbooksCache = ebooks || [];
+        }
+
+        async function fetchTopics() {
+            const { data: topics, error } = await sb
+                .from('forum_topics')
+                .select(` id, title, whatsapp_link, created_at, created_by `)
+                .order('created_at', { ascending: false });
+            if (error) {
+                console.error("Erro ao buscar tópicos:", error.message);
+                if(forumListContainer) forumListContainer.innerHTML = `<p style="color: var(--danger-color); text-align: center;">Erro ao carregar os tópicos: ${error.message}</p>`;
+                return;
+            }
+            allTopicsCache = topics || [];
+        }
+
+
+        // ########## 4. FUNÇÕES DE MODAIS (Lógica de submissão) ##########
+        
+        function resetTopicModal() { 
+            if (!newTopicForm) return; newTopicForm.reset();
+            if (topicFeedbackMessage) { topicFeedbackMessage.style.display = 'none'; topicFeedbackMessage.className = ''; }
+            if (topicModalTitle) topicModalTitle.textContent = 'Criar Novo Tópico';
+            if (submitTopicButton) { submitTopicButton.textContent = 'Criar Tópico'; submitTopicButton.disabled = false; }
+            delete newTopicForm.dataset.editingId;
+        }
+        function handleEditTopic(topicId) { 
+            const topicData = allTopicsCache.find(t => t.id == topicId);
+            if (!topicData || !newTopicForm) { console.error('Não foi possível encontrar os dados do tópico para edição ou o formulário não existe.'); return; }
+            newTopicForm.dataset.editingId = topicId;
+            newTopicForm['topic-title'].value = topicData.title;
+            newTopicForm['whatsapp-link'].value = topicData.whatsapp_link;
+            if (topicModalTitle) topicModalTitle.textContent = 'Editar Tópico';
+            if (submitTopicButton) submitTopicButton.textContent = 'Salvar Alterações';
+            if (newTopicModalElement) newTopicModalElement.classList.add('visible');
+        }
+        function showTopicFeedback(message, type, duration = null) { 
+            if (!topicFeedbackMessage) return;
+            topicFeedbackMessage.textContent = message; topicFeedbackMessage.className = type;
+            topicFeedbackMessage.style.display = message ? 'block' : 'none';
+            if (type === 'success' && duration) {
+                 setTimeout(() => {
+                     if (newTopicModalElement) newTopicModalElement.classList.remove('visible');
+                     resetTopicModal();
+                 }, duration);
+            }
+        }
+        function resetEbookModal() { 
+            if (!ebookForm) return; ebookForm.reset();
+            if(ebookFeedbackMessage) { ebookFeedbackMessage.style.display = 'none'; ebookFeedbackMessage.className = ''; }
+            delete ebookForm.dataset.editingId;
+            const titleEl = document.getElementById('ebook-modal-title');
+            if(titleEl) titleEl.textContent = 'Publique seu E-book';
+            if(submitEbookButton) { submitEbookButton.textContent = 'Enviar E-book'; submitEbookButton.disabled = false; }
+            const coverLabel = document.querySelector('label[for="ebook-cover-image"]');
+            if (coverLabel) coverLabel.textContent = 'Imagem da Capa (JPG, PNG)';
+            const coverInput = document.getElementById('ebook-cover-image');
+            if(coverInput) coverInput.required = true;
+            const coverHelp = document.getElementById('coverHelp');
+            if(coverHelp) coverHelp.textContent = 'A capa é obrigatória (máx 5MB).';
+            const pdfLabel = document.querySelector('label[for="ebook-pdf-file"]');
+            if (pdfLabel) pdfLabel.textContent = 'Seu E-book (PDF)';
+            const pdfInput = document.getElementById('ebook-pdf-file');
+            if(pdfInput) pdfInput.required = true;
+            const pdfHelp = document.getElementById('pdfHelp');
+            if(pdfHelp) pdfHelp.textContent = 'Apenas arquivos .pdf (máx 15MB).';
+        }
+        function showEbookFeedback(message, type, duration = 4000) { 
+            if(!ebookFeedbackMessage) return;
+            ebookFeedbackMessage.textContent = message; ebookFeedbackMessage.className = type;
+            ebookFeedbackMessage.style.display = 'block';
+            if (type === 'success' && duration) {
+                setTimeout(() => {
+                    if(ebookModalElement) ebookModalElement.classList.remove('visible');
+                    ebookFeedbackMessage.style.display = 'none';
+                    resetEbookModal();
+                }, duration);
+            }
+        }
+        function handleEditEbook(ebookId) { 
+            const ebook = allEbooksCache.find(e => e.id == ebookId);
+            if (!ebook || !ebookForm) return alert('E-book não encontrado ou formulário inválido.');
+            resetEbookModal();
+            ebookForm.dataset.editingId = ebookId;
+            ebookForm['ebook-title'].value = ebook.title;
+            const titleEl = document.getElementById('ebook-modal-title');
+            if(titleEl) titleEl.textContent = 'Editar E-book';
+            if(submitEbookButton) submitEbookButton.textContent = 'Salvar Alterações';
+            const coverLabel = document.querySelector('label[for="ebook-cover-image"]');
+            if (coverLabel) coverLabel.textContent = 'Nova Imagem da Capa (Opcional)';
+            const coverInput = document.getElementById('ebook-cover-image');
+            if(coverInput) coverInput.required = false;
+            const coverHelp = document.getElementById('coverHelp');
+            if(coverHelp) coverHelp.textContent = 'Envie apenas se quiser substituir a capa atual (máx 5MB).';
+            const pdfLabel = document.querySelector('label[for="ebook-pdf-file"]');
+            if (pdfLabel) pdfLabel.textContent = 'Novo Arquivo PDF (Opcional)';
+            const pdfInput = document.getElementById('ebook-pdf-file');
+            if(pdfInput) pdfInput.required = false;
+            const pdfHelp = document.getElementById('pdfHelp');
+            if(pdfHelp) pdfHelp.textContent = 'Envie apenas se quiser substituir o PDF atual (máx 15MB).';
+            if(ebookModalElement) ebookModalElement.classList.add('visible');
+        }
+        async function handleDeleteEbook(ebookId) { 
+            const ebook = allEbooksCache.find(e => e.id == ebookId);
+            if (!ebook) return alert('E-book não encontrado.');
+            if (!confirm(`Tem certeza que deseja excluir o e-book "${ebook.title}"? Esta ação não pode ser desfeita.`)) return;
+            try {
+                const coverUrl = new URL(ebook.cover_image_url);
+                const coverPath = coverUrl.pathname.split('/ebooks/')[1];
+                const pdfUrl = new URL(ebook.pdf_url);
+                const pdfPath = pdfUrl.pathname.split('/ebooks/')[1];
+                if (!coverPath || !pdfPath) { throw new Error("Não foi possível extrair os caminhos dos arquivos das URLs."); }
+                const { error: storageError } = await sb.storage.from('ebooks').remove([coverPath, pdfPath]);
+                if (storageError && storageError.message !== 'The resource was not found') throw storageError;
+                const { error: dbError } = await sb.from('ebooks').delete().eq('id', ebookId).eq('author_id', currentUser.id);
+                if (dbError) throw dbError;
+                
+                allEbooksCache = allEbooksCache.filter(e => e.id != ebookId);
+                renderUI(); 
+            } catch (error) {
+                console.error('Erro ao excluir e-book:', error);
+                alert(`Erro ao excluir: ${error.message}.`);
+            }
+        }
+        function resetArticleModal() { 
+            if (!articleForm) return;
+            articleForm.reset();
+            if(feedbackMessage){ feedbackMessage.style.display = 'none'; feedbackMessage.className = ''; }
+            delete articleForm.dataset.editingId;
+            if(articleModalTitle) articleModalTitle.textContent = 'Publique seu Artigo';
+            
+            if(submitButton) {
+                submitButton.textContent = 'Enviar Artigo';
+                submitButton.disabled = false; 
+            }
+            
+            if(articleModalContent) articleModalContent.dataset.mode = 'new-article';
+            if(pdfFileInput) pdfFileInput.required = true;
+            if(pdfFileHelp) pdfFileHelp.textContent = 'Apenas arquivos .pdf são aceitos (máx 10MB).';
+            if(descriptionInput) descriptionInput.value = '';
+            if(coverImageInput) coverImageInput.value = '';
+        }
+        function showFeedback(message, type, duration = 4000) { 
+            if(!feedbackMessage) return;
+            feedbackMessage.textContent = message; feedbackMessage.className = type;
+            feedbackMessage.style.display = 'block';
+            if (type === 'success' && duration) {
+                setTimeout(() => {
+                    if(articleModal) articleModal.classList.remove('visible');
+                    feedbackMessage.style.display = 'none';
+                    resetArticleModal();
+                }, duration);
+            }
+        }
+        function handleEditArticle(articleId) { 
+             const article = allArticlesCache.find(a => a.id == articleId);
+             if (!article || !articleForm || !articleModalContent || !articleModalTitle || !submitButton || !pdfFileInput || !pdfFileHelp || !articleModal || !descriptionInput || !coverImageInput) return alert('Artigo não encontrado ou elementos do modal faltando.');
+             resetArticleModal();
+             articleForm.dataset.editingId = articleId;
+             articleModalContent.dataset.mode = 'edit-article';
+             articleForm.title.value = article.title;
+             descriptionInput.value = article.description || ''; 
+             articleModalTitle.textContent = 'Editar Artigo';
+             submitButton.textContent = 'Salvar Alterações';
+             pdfFileInput.required = false;
+             pdfFileHelp.textContent = 'A edição de arquivo PDF não é permitida.';
+             articleModal.classList.add('visible');
+        }
+        async function handleDeleteArticle(articleId) { 
+             const article = allArticlesCache.find(a => a.id == articleId);
+             if (!article) return alert('Artigo não encontrado.');
+             if (!confirm(`Tem certeza que deseja excluir o artigo "${article.title}"? Esta ação não pode ser desfeita.`)) return;
+             try {
+                let filesToRemove = [];
+                if (article.pdfUrl) {
+                    try {
+                        const pdfUrl = new URL(article.pdfUrl);
+                        const pdfPath = decodeURIComponent(pdfUrl.pathname.split(`/${BUCKET_ARTIGOS}/`)[1]);
+                        if (pdfPath) filesToRemove.push(pdfPath);
+                    } catch (urlError) { console.warn("Não foi possível processar a URL do PDF:", urlError); }
+                } else { console.warn("Artigo sem URL de PDF:", article); }
+                if (article.cover_image_url) {
+                    try {
+                        const coverUrl = new URL(article.cover_image_url);
+                        const coverPath = decodeURIComponent(coverUrl.pathname.split(`/${BUCKET_ARTIGOS}/`)[1]);
+                        if (coverPath) filesToRemove.push(coverPath);
+                    } catch (urlError) { console.warn("Não foi possível processar a URL da capa:", urlError); }
+                }
+                if (filesToRemove.length > 0) {
+                    const { error: storageError } = await sb.storage.from(BUCKET_ARTIGOS).remove(filesToRemove);
+                    if (storageError && storageError.message !== 'The resource was not found') { throw storageError; }
+                }
+                const { error: dbError } = await sb.from(TABELA_ARTIGOS).delete().eq('id', articleId).eq('author_id', currentUser.id);
+                if (dbError) throw dbError;
+                
+                allArticlesCache = allArticlesCache.filter(a => a.id != articleId);
+                renderUI(); 
+             } catch (error) {
+                 console.error('Erro ao excluir artigo:', error);
+                 alert(`Erro ao excluir: ${error.message}.`);
+             }
+        }
+        
+        function resetMessageModal() {
+            if (!messageForm) return;
+            messageForm.reset();
+            if (messageFeedback) { messageFeedback.style.display = 'none'; messageFeedback.className = ''; }
+            if (submitMessageButton) { submitMessageButton.disabled = false; submitMessageButton.textContent = 'Enviar Mensagem'; }
+            messageForm.dataset.receiverId = '';
+        }
+        function showMessageFeedback(message, type, duration = 3000) {
+            if (!messageFeedback) return;
+            messageFeedback.textContent = message;
+            messageFeedback.className = type;
+            messageFeedback.style.display = 'block';
+            if (type === 'success' && duration) {
+                setTimeout(() => {
+                    if (messageModal) messageModal.classList.remove('visible');
+                    messageFeedback.style.display = 'none';
+                    resetMessageModal();
+                }, duration);
+            }
+        }
+        
+        // [NOVO] Funções do Modal de Denúncia
+        function resetReportModal() {
+            if (!reportForm) return;
+            reportForm.reset();
+            if (reportFeedback) { reportFeedback.style.display = 'none'; reportFeedback.className = ''; }
+            if (submitReportButton) { submitReportButton.disabled = false; submitReportButton.textContent = 'Enviar Denúncia'; }
+            reportForm.dataset.contentType = '';
+            reportForm.dataset.contentId = '';
+            reportForm.dataset.contentLink = '';
+            if (reportContentName) reportContentName.textContent = '';
+        }
+        function showReportFeedback(message, type, duration = 3000) {
+            if (!reportFeedback) return;
+            reportFeedback.textContent = message;
+            reportFeedback.className = type;
+            reportFeedback.style.display = 'block';
+            if (type === 'success' && duration) {
+                setTimeout(() => {
+                    if (reportModal) reportModal.classList.remove('visible');
+                    reportFeedback.style.display = 'none';
+                    resetReportModal();
+                }, duration);
+            }
+        }
+        function openReportModal(contentType, contentId, contentName, contentLink) {
+            if (!currentUser) {
+                alert('Você precisa estar logado para fazer uma denúncia.');
+                window.location.href = 'login.html';
+                return;
+            }
+            resetReportModal();
+            reportForm.dataset.contentType = contentType;
+            reportForm.dataset.contentId = contentId;
+            reportForm.dataset.contentLink = contentLink;
+            reportContentName.textContent = contentName;
+            reportModal.classList.add('visible');
+        }
+
+
+        // --- Lógica de Submissão de Tópico (Fórum) ---
+        if (newTopicForm) {
+            newTopicForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUser) { showTopicFeedback('Você precisa estar logado para criar um tópico.', 'error'); return; }
+                const title = newTopicForm['topic-title'].value.trim();
+                const whatsappLink = newTopicForm['whatsapp-link'].value.trim();
+                const editingId = newTopicForm.dataset.editingId;
+                if (!whatsappLink.startsWith('https://chat.whatsapp.com/')) { showTopicFeedback('Por favor, insira um link de convite do WhatsApp válido.', 'error'); return; }
+                if(submitTopicButton) submitTopicButton.disabled = true; showTopicFeedback('', '');
+                let error;
+                if (editingId) {
+                    if(submitTopicButton) submitTopicButton.textContent = 'Salvando...';
+                    const { error: updateError } = await sb.from('forum_topics').update({ title: title, whatsapp_link: whatsappLink }).eq('id', editingId).eq('created_by', currentUser.id);
+                    error = updateError;
+                } else {
+                    if(submitTopicButton) submitTopicButton.textContent = 'Criando...';
+                    const { error: insertError } = await sb.from('forum_topics').insert({ title: title, whatsapp_link: whatsappLink, created_by: currentUser.id });
+                    error = insertError;
+                }
+                if (error) {
+                    console.error("Erro ao salvar tópico:", error);
+                    showTopicFeedback(`Erro ao salvar: ${error.message}`, 'error');
+                } else {
+                    const successMessage = editingId ? 'Tópico atualizado com sucesso!' : 'Tópico criado com sucesso!';
+                    showTopicFeedback(successMessage, 'success', 2500);
+                    await fetchTopics(); 
+                    renderUI(); 
+                }
+                if (submitTopicButton) {
+                     submitTopicButton.disabled = false;
+                     submitTopicButton.textContent = editingId ? 'Salvar Alterações' : 'Criar Tópico';
+                }
+            });
+        }
+        
+        // --- Lógica de Submissão de E-book ---
+        if (ebookForm) {
+            ebookForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUser) return showEbookFeedback('Você precisa estar logado.', 'error');
+                const title = ebookForm['ebook-title'].value.trim();
+                const coverFile = ebookForm['ebook-cover-image'].files[0];
+                const pdfFile = ebookForm['ebook-pdf-file'].files[0];
+                const editingId = ebookForm.dataset.editingId;
+                if (!title) return showEbookFeedback('O título é obrigatório.', 'error');
+                if (!editingId && (!coverFile || !pdfFile)) return showEbookFeedback('Para um novo e-book, a capa e o PDF são obrigatórios.', 'error');
+                if (coverFile && coverFile.size > 5 * 1024 * 1024) return showEbookFeedback('A imagem da capa é muito grande (Máx 5MB).', 'error');
+                if (pdfFile && pdfFile.size > 15 * 1024 * 1024) return showEbookFeedback('O arquivo PDF é muito grande (Máx 15MB).', 'error');
+                if (pdfFile && pdfFile.type !== 'application/pdf') return showEbookFeedback('Arquivo de e-book inválido. Apenas .pdf é aceito.', 'error');
+                if(submitEbookButton) { submitEbookButton.disabled = true; submitEbookButton.textContent = 'Enviando...'; }
+                showEbookFeedback('Processando seu e-book...', 'info');
+                let ebookData = { title: title, author_id: currentUser.id, author_name: currentUser.profile.full_name || currentUser.profile.email || 'Usuário Anônimo' };
+                let oldEbookData = null;
+                if (editingId) {
+                    oldEbookData = allEbooksCache.find(eb => eb.id == editingId);
+                    if(oldEbookData) { ebookData.cover_image_url = oldEbookData.cover_image_url; ebookData.pdf_url = oldEbookData.pdf_url; }
+                }
+                let coverPathForStorage = ''; let pdfPathForStorage = ''; let oldPathsToDelete = [];
+                try {
+                    if (coverFile) {
+                        showEbookFeedback('Enviando nova capa...', 'info');
+                        coverPathForStorage = `ebook-covers/${currentUser.id}/${Date.now()}-${coverFile.name}`;
+                        const { error: coverUploadError } = await sb.storage.from('ebooks').upload(coverPathForStorage, coverFile, { upsert: !!editingId });
+                        if (coverUploadError) throw coverUploadError;
+                        const { data: coverUrlData } = sb.storage.from('ebooks').getPublicUrl(coverPathForStorage);
+                        ebookData.cover_image_url = coverUrlData.publicUrl;
+                        if (editingId && oldEbookData?.cover_image_url) {
+                            try { const oldCoverPath = new URL(oldEbookData.cover_image_url).pathname.split('/ebooks/')[1]; if(oldCoverPath) oldPathsToDelete.push(oldCoverPath); } catch (urlError) { console.warn("Could not parse old cover URL to delete:", urlError); }
+                        }
+                    }
+                    if (pdfFile) {
+                        showEbookFeedback('Enviando novo PDF...', 'info');
+                        pdfPathForStorage = `ebook-pdfs/${currentUser.id}/${Date.now()}-${pdfFile.name}`;
+                        const { error: pdfUploadError } = await sb.storage.from('ebooks').upload(pdfPathForStorage, pdfFile, { upsert: !!editingId });
+                        if (pdfUploadError) throw pdfUploadError;
+                        const { data: pdfUrlData } = sb.storage.from('ebooks').getPublicUrl(pdfPathForStorage);
+                        ebookData.pdf_url = pdfUrlData.publicUrl;
+                        if (editingId && oldEbookData?.pdf_url) {
+                             try { const oldPdfPath = new URL(oldEbookData.pdf_url).pathname.split('/ebooks/')[1]; if(oldPdfPath) oldPathsToDelete.push(oldPdfPath); } catch (urlError) { console.warn("Could not parse old PDF URL to delete:", urlError); }
+                        }
+                    }
+                    showEbookFeedback('Salvando informações...', 'info');
+                    if (editingId) {
+                        const { error: updateError } = await sb.from('ebooks').update(ebookData).eq('id', editingId).eq('author_id', currentUser.id);
+                        if (updateError) throw updateError;
+                    } else {
+                        const { error: insertError } = await sb.from('ebooks').insert(ebookData);
+                        if (insertError) throw insertError;
+                    }
+                    if (oldPathsToDelete.length > 0) { await sb.storage.from('ebooks').remove(oldPathsToDelete); }
+                    const successMsg = editingId ? 'E-book atualizado com sucesso!' : 'E-book publicado com sucesso!';
+                    showEbookFeedback(successMsg, 'success');
+                    await fetchEbooks(); 
+                    renderUI(); 
+                } catch (error) {
+                    console.error("Erro no E-book:", error);
+                    showEbookFeedback(`Erro: ${error.message}`, 'error');
+                    let newPathsToRollback = [];
+                    if (coverPathForStorage) newPathsToRollback.push(coverPathForStorage);
+                    if (pdfPathForStorage) newPathsToRollback.push(pdfPathForStorage);
+                    if (newPathsToRollback.length > 0) { await sb.storage.from('ebooks').remove(newPathsToRollback); }
+                }
+                if(submitEbookButton) { submitEbookButton.disabled = false; submitEbookButton.textContent = editingId ? 'Salvar Alterações' : 'Enviar E-book'; }
+            });
+        }
+        
+        // --- Lógica de Submissão de Artigo ---
+        if (articleForm) {
+            articleForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUser) return showFeedback('Erro: Você não está logado.', 'error');
+                const title = articleForm.title.value.trim();
+                const description = descriptionInput ? descriptionInput.value.trim() : '';
+                const file = pdfFileInput?.files[0];
+                const coverFile = coverImageInput?.files[0];
+                const editingId = articleForm.dataset.editingId;
+                if (!title) return showFeedback('Por favor, preencha o título.', 'error');
+                
+                if (editingId) {
+                    if(submitButton) submitButton.textContent = 'Salvando...';
+                    const { error: updateError } = await sb.from(TABELA_ARTIGOS).update({ title: title, description: description }).eq('id', editingId).eq('author_id', currentUser.id);
+                    if (updateError) {
+                        console.error("Erro ao atualizar artigo:", updateError);
+                        showFeedback(`Erro ao salvar: ${updateError.message}`, 'error');
+                    } else {
+                        showFeedback('Artigo atualizado com sucesso!', 'success'); 
+                        await fetchArticlesAndComments(); 
+                        renderUI(); 
+                    }
+                } else {
+                    if (!file) return showFeedback('Por favor, envie o arquivo PDF.', 'error');
+                    if (file.type !== 'application/pdf') return showFeedback('Arquivo PDF inválido. Apenas .pdf é aceito.', 'error');
+                    if (file.size > 10 * 1024 * 1024) return showFeedback('Arquivo PDF muito grande (Máx 10MB).', 'error');
+                    if (coverFile) {
+                        if (!coverFile.type.startsWith('image/')) return showFeedback('Arquivo de capa inválido. Apenas JPG ou PNG.', 'error');
+                        if (coverFile.size > 2 * 1024 * 1024) return showFeedback('Arquivo de capa muito grande (Máx 2MB).', 'error');
+                    }
+                    if(submitButton) { submitButton.disabled = true; submitButton.textContent = 'Enviando...'; }
+                    let coverImageUrl = null; let coverFileName = ''; let pdfFileName = '';
+                    try {
+                        if (coverFile) {
+                            showFeedback('Fazendo upload da capa...', 'info');
+                            coverFileName = `article-covers/${currentUser.id}/${Date.now()}-${coverFile.name}`;
+                            const { error: coverUploadError } = await sb.storage.from(BUCKET_ARTIGOS).upload(coverFileName, coverFile);
+                            if (coverUploadError) throw coverUploadError;
+                            const { data: coverUrlData } = sb.storage.from(BUCKET_ARTIGOS).getPublicUrl(coverFileName);
+                            coverImageUrl = coverUrlData.publicUrl;
+                        }
+                        showFeedback('Fazendo upload do seu arquivo PDF...', 'info');
+                        pdfFileName = `${currentUser.id}/${Date.now()}-${file.name}`;
+                        const { error: uploadError } = await sb.storage.from(BUCKET_ARTIGOS).upload(pdfFileName, file);
+                        if (uploadError) throw uploadError;
+                        const { data: urlData } = sb.storage.from(BUCKET_ARTIGOS).getPublicUrl(pdfFileName);
+                        showFeedback('Salvando informações...', 'info');
+                        const { error: insertError } = await sb.from(TABELA_ARTIGOS).insert({
+                            title: title, pdfUrl: urlData.publicUrl, cover_image_url: coverImageUrl,
+                            author_id: currentUser.id, author_name: currentUser.profile.full_name || currentUser.profile.email || 'Usuário Anônimo',
+                            description: description 
+                        });
+                        if (insertError) throw insertError;
+                        showFeedback('Artigo publicado com sucesso!', 'success');
+                        await fetchArticlesAndComments(); 
+                        renderUI(); 
+                    } catch (error) {
+                        console.error("Erro no envio:", error);
+                        showFeedback(`Erro: ${error.message}`, 'error');
+                        let filesToRollback = [];
+                        if (pdfFileName) filesToRollback.push(pdfFileName);
+                        if (coverFileName) filesToRollback.push(coverFileName);
+                        if (filesToRollback.length > 0) { await sb.storage.from(BUCKET_ARTIGOS).remove(filesToRollback); }
+                    }
+                }
+                
+                if(submitButton) { 
+                    submitButton.disabled = false; 
+                    submitButton.textContent = editingId ? 'Salvar Alterações' : 'Enviar Artigo'; 
+                }
+            });
+        }
+
+        // --- Lógica de Submissão de Mensagem ---
+        if (messageForm) {
+            messageForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUser) return showMessageFeedback('Você precisa estar logado.', 'error');
+
+                const content = messageContentInput.value.trim();
+                const receiverId = messageForm.dataset.receiverId;
+
+                if (!content) return showMessageFeedback('A mensagem não pode estar vazia.', 'error');
+                if (!receiverId) return showMessageFeedback('Erro: Destinatário não encontrado.', 'error');
+
+                submitMessageButton.disabled = true;
+                submitMessageButton.textContent = 'Enviando...';
+
+                try {
+                    const { error } = await sb.from('messages').insert({
+                        sender_id: currentUser.id,
+                        receiver_id: receiverId,
+                        content: content
+                    });
+
+                    if (error) throw error;
+
+                    showMessageFeedback('Mensagem enviada com sucesso!', 'success');
+                } catch (error) {
+                    console.error("Erro ao enviar mensagem:", error);
+                    showMessageFeedback(`Erro ao enviar: ${error.message}`, 'error');
+                } finally {
+                    submitMessageButton.disabled = false;
+                    submitMessageButton.textContent = 'Enviar Mensagem';
+                }
+            });
+        }
+        
+        // [NOVO] Lógica de Submissão de Denúncia
+        if (reportForm) {
+            reportForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUser) return showReportFeedback('Você precisa estar logado.', 'error');
+
+                const reason = reportReasonInput.value.trim();
+                const contentType = reportForm.dataset.contentType;
+                const contentId = reportForm.dataset.contentId;
+                const contentLink = reportForm.dataset.contentLink;
+                
+                if (!reason || !contentType || !contentId) return showReportFeedback('Erro: Informações incompletas.', 'error');
+
+                submitReportButton.disabled = true;
+                submitReportButton.textContent = 'Enviando...';
+
+                try {
+                    const { error } = await sb.from('reports').insert({
+                        reporter_id: currentUser.id,
+                        content_type: contentType,
+                        content_id: contentId,
+                        content_link: contentLink,
+                        reason: reason
+                    });
+
+                    if (error) throw error;
+                    showReportFeedback('Denúncia enviada com sucesso. Obrigado!', 'success');
+                } catch (error) {
+                    console.error("Erro ao enviar denúncia:", error);
+                    showReportFeedback(`Erro ao enviar: ${error.message}`, 'error');
+                } finally {
+                    submitReportButton.disabled = false;
+                    submitReportButton.textContent = 'Enviar Denúncia';
+                }
+            });
+        }
+
+
+        // ########## 5. AUTENTICAÇÃO E INICIALIZAÇÃO ##########
+        
+        async function setupPage() {
+            const { data: { session }, error: sessionError } = await sb.auth.getSession();
+             if (sessionError || !session) {
+                console.warn('Nenhuma sessão ativa, redirecionando para login.');
+                window.location.href = 'login.html'; 
+                return;
+            }
+            currentUser = session.user;
+
+            const { data: profile, error: profileError } = await sb.from('profiles').select('avatar_url, full_name, email').eq('id', currentUser.id).single();
+            if (profileError && profileError.code !== 'PGRST116') {
+                 console.error('Erro ao buscar perfil:', profileError);
+            }
+            
+            currentUser.profile = profile || {};
+            if (!currentUser.profile.email && currentUser.email) currentUser.profile.email = currentUser.email;
+
+            setupNav(session, currentUser.profile);
+            
+            try {
+                await Promise.all([
+                    fetchArticlesAndComments(),
+                    fetchTopics(),
+                    fetchEbooks()
+                ]);
+            } catch (e) {
+                console.error("Erro fatal ao carregar dados iniciais:", e);
+            }
+            
+            renderUI();
+            setupRealtimeSubscriptions(); 
+            handleUrlParameters(); 
+        }
+
+        async function setupNav(session, profile) { 
+            const navLinks = document.getElementById('main-nav-links');
+            if(!navLinks) return;
+            const avatarName = profile?.full_name || 'U';
+            const avatarUrl = profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(avatarName)}&background=285430&color=fff&bold=true`;
+            const profileHtml = `<li class="dynamic-nav-item"><a href="perfil.html" class="nav-profile-link" style="display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--green-dark);">Meu Perfil<span id="notification-badge" class="notification-badge"></span><img src="${avatarUrl}" alt="Foto de perfil" class="nav-avatar"></a></li>`;
+            navLinks.insertAdjacentHTML('beforeend', profileHtml);
+            updateNotificationBadge();
+        }
+        async function updateNotificationBadge() { 
+            if (!currentUser) return;
+            const { count, error } = await sb.from('notifications').select('*', { count: 'exact', head: true }).eq('user_id', currentUser.id).eq('is_read', false);
+             if (error) { console.error("Erro ao contar notificações:", error); return; }
+            const badge = document.getElementById('notification-badge');
+            if (badge && count > 0) { badge.textContent = count; badge.style.display = 'block'; }
+            else if (badge) { badge.style.display = 'none'; }
+        }
+
+        function handleUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleId = urlParams.get('article');
+            const commentId = window.location.hash.substring(1);
+
+            if (articleId) {
+                const articleIndex = allArticlesCache.findIndex(a => a.id == articleId);
+                if (articleIndex === -1) return; 
+                
+                const pageOfArticle = Math.ceil((articleIndex + 1) / ITEMS_PER_PAGE);
+                currentPage.artigos = pageOfArticle;
+                currentTab = 'artigos';
+                
+                tabButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tab === 'artigos');
+                });
+                tabContents.forEach(content => {
+                    content.classList.toggle('active', content.id === 'artigos-content');
+                });
+                
+                renderUI(); 
+                
+                setTimeout(() => {
+                    const articleCard = document.querySelector(`.article-card[data-article-id="${articleId}"]`);
+                    if (articleCard) {
+                        if (commentId) {
+                            const commentsSection = articleCard.querySelector('.comments-section');
+                            if (commentsSection) commentsSection.style.display = 'block';
+                            const toggleBtn = articleCard.querySelector('.comment-toggle-btn');
+                            if (toggleBtn) toggleBtn.classList.add('active');
+                            
+                            setTimeout(() => { 
+                                const commentElement = document.getElementById(commentId);
+                                if (commentElement) {
+                                    commentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    commentElement.classList.add('highlight');
+                                    setTimeout(() => { commentElement.classList.remove('highlight'); }, 2500);
+                                }
+                            }, 500); 
+                            
+                        } else {
+                            articleCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+                }, 100); 
+            }
+        }
+
+        // ########## 6. EVENT LISTENERS GLOBAIS ##########
+        
+        if (searchBar) {
+            let searchTimeout;
+            searchBar.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(renderUI, 300);
+            });
+        }
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                currentTab = button.getAttribute('data-tab');
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                button.classList.add('active');
+                
+                const activeContent = document.getElementById(`${currentTab}-content`);
+                if (activeContent) activeContent.classList.add('active');
+                
+                renderUI(); 
+            });
+        });
+
+        [articlesPagination, ebooksPagination, forumPagination].forEach(container => {
+            if (container) {
+                container.addEventListener('click', (e) => {
+                    const pageBtn = e.target.closest('.page-btn');
+                    if (pageBtn && !pageBtn.disabled) {
+                        const page = parseInt(pageBtn.dataset.page);
+                        currentPage[currentTab] = page;
+                        renderUI();
+                        container.closest('.tab-content, #search-results-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }
+        });
+
+        if (ebooksContainer) {
+            ebooksContainer.addEventListener('click', async (e) => {
+                const deleteBtn = e.target.closest('.delete-ebook-btn');
+                const editBtn = e.target.closest('.edit-ebook-btn');
+                const reportBtn = e.target.closest('.report-btn'); // [NOVO]
+                
+                if (deleteBtn) await handleDeleteEbook(deleteBtn.dataset.ebookId);
+                if (editBtn) handleEditEbook(editBtn.dataset.ebookId);
+                if (reportBtn) { // [NOVO]
+                    openReportModal(
+                        'ebook', 
+                        reportBtn.dataset.contentId, 
+                        reportBtn.dataset.contentName,
+                        window.location.href // A URL atual
+                    );
+                }
+            });
+        }
+        
+        if (forumListContainer) {
+            forumListContainer.addEventListener('click', async (e) => {
+                const deleteBtn = e.target.closest('.delete-topic-btn');
+                const editBtn = e.target.closest('.edit-topic-btn');
+                const reportBtn = e.target.closest('.report-btn'); // [NOVO]
+                
+                if (deleteBtn) {
+                    const topicId = deleteBtn.dataset.topicId;
+                    if (confirm('Tem certeza que deseja excluir este tópico?')) {
+                        const { error } = await sb.from('forum_topics').delete().eq('id', topicId).eq('created_by', currentUser.id);
+                        if (error) { alert(`Erro ao excluir: ${error.message}`); }
+                        else {
+                            await fetchTopics(); 
+                            renderUI(); 
+                        }
+                    }
+                }
+                if (editBtn) handleEditTopic(editBtn.dataset.topicId);
+                if (reportBtn) { // [NOVO]
+                    openReportModal(
+                        'topic', 
+                        reportBtn.dataset.contentId, 
+                        reportBtn.dataset.contentName,
+                        e.target.closest('.forum-topic').querySelector('a').href // Link do Zap
+                    );
+                }
+            });
+        }
+
+        // --- Listener de Ações nos Artigos (Delegação) ---
+        if(articlesContainer) {
+             articlesContainer.addEventListener('click', async (e) => {
+                const commentToggleBtn = e.target.closest('.comment-toggle-btn');
+                const replyBtn = e.target.closest('.reply-comment-btn');
+                const likeBtn = e.target.closest('.like-btn');
+                const shareBtn = e.target.closest('.share-btn');
+                const deleteCommentBtn = e.target.closest('.delete-comment-btn');
+                const editCommentBtn = e.target.closest('.edit-comment-btn');
+                const cancelEditBtn = e.target.closest('.cancel-edit-btn');
+                const deleteArticleBtn = e.target.closest('.delete-article-btn');
+                const editArticleBtn = e.target.closest('.edit-article-btn');
+                const messageAuthorBtn = e.target.closest('.message-author-btn');
+                const reportBtn = e.target.closest('.report-btn'); // [NOVO]
+
+                if (commentToggleBtn) { 
+                    const commentsSection = commentToggleBtn.closest('.article-card')?.querySelector('.comments-section');
+                    if(commentsSection) { commentsSection.style.display = commentsSection.style.display === 'block' ? 'none' : 'block'; commentToggleBtn.classList.toggle('active'); }
+                }
+                else if (replyBtn) { 
+                    const commentBody = replyBtn.closest('.comment-body'); if(!commentBody) return;
+                    const formContainer = commentBody.querySelector('.reply-form-container');
+                    const editFormContainer = commentBody.querySelector('.edit-form-container');
+                    if (editFormContainer) editFormContainer.innerHTML = '';
+                    const contentEl = commentBody.querySelector('.comment-content'); if(contentEl) contentEl.style.display = 'block';
+                    const actionsEl = commentBody.querySelector('.comment-actions'); if(actionsEl) actionsEl.style.display = 'flex';
+                    if (formContainer.innerHTML) { formContainer.innerHTML = ''; return; }
+                    const articleCard = replyBtn.closest('.article-card'); const mainForm = articleCard?.querySelector('.comment-form');
+                    const parentComment = replyBtn.closest('.comment'); if(!mainForm || !parentComment) return;
+                    const parentAuthorId = parentComment.dataset.commentAuthorId;
+                    formContainer.innerHTML = `<form class="comment-form" data-article-id="${mainForm.dataset.articleId}" data-article-author-id="${mainForm.dataset.articleAuthorId}" data-article-title="${mainForm.dataset.articleTitle}" data-parent-comment-id="${parentComment.dataset.commentId}" data-parent-comment-author-id="${parentAuthorId}"><input type="text" placeholder="Escreva uma resposta..." required><button type="submit" class="btn btn-primary">Responder</button></form>`;
+                    formContainer.querySelector('input')?.focus();
+                }
+                else if (likeBtn && !likeBtn.disabled) { 
+                    const articleId = likeBtn.closest('.article-card')?.dataset.articleId; if(!articleId) return;
+                    likeBtn.disabled = true;
+                    const { data: newLikeCount, error } = await sb.rpc('toggle_like', { article_id_to_toggle: articleId });
+                    if (!error && newLikeCount !== null) {
+                        const countSpan = likeBtn.querySelector('.like-count');
+                        if(countSpan) countSpan.textContent = newLikeCount;
+                        likeBtn.classList.toggle('liked');
+                        const articleInCache = allArticlesCache.find(a => a.id == articleId);
+                        if (articleInCache) articleInCache.likes = newLikeCount;
+                        if (likeBtn.classList.contains('liked')) likedArticleIds.add(parseInt(articleId));
+                        else likedArticleIds.delete(parseInt(articleId));
+                    } else console.error("Erro ao curtir ou contagem inválida:", error, newLikeCount);
+                    likeBtn.disabled = false;
+                }
+                else if (shareBtn) { 
+                    const title = shareBtn.dataset.title || 'Artigo'; const articleId = shareBtn.dataset.id; if(!articleId) return;
+                    const url = `${window.location.origin}${window.location.pathname}?article=${articleId}`;
+                    if (navigator.share) {
+                        try { await navigator.share({ title: `Vida Plena: ${title}`, text: `Confira este artigo no Projeto Vida Plena: ${title}`, url: url }); } catch (err) { console.error('Erro ao compartilhar:', err); }
+                    } else { try { await navigator.clipboard.writeText(url); alert('Link do artigo copiado para a área de transferência!'); } catch(err) { console.error('Erro ao copiar link:', err); alert('Erro ao copiar o link.'); } }
+                }
+                else if (deleteCommentBtn) { 
+                    const commentElement = deleteCommentBtn.closest('.comment'); if(!commentElement) return;
+                    const commentId = commentElement.dataset.commentId;
+                    if (confirm('Tem certeza que deseja excluir este comentário?')) {
+                        const { error } = await sb.from('comments').delete().eq('id', commentId);
+                        if (error) { console.error('Erro ao excluir:', error); alert('Erro ao excluir comentário.'); }
+                        else {
+                            await fetchArticlesAndComments(); 
+                            renderUI(); 
+                        }
+                    }
+                }
+                else if (editCommentBtn) { 
+                    const commentBody = editCommentBtn.closest('.comment-body'); if(!commentBody) return;
+                    const replyFormContainer = commentBody.querySelector('.reply-form-container'); if (replyFormContainer) replyFormContainer.innerHTML = '';
+                    const commentContentEl = commentBody.querySelector('.comment-content'); const commentActionsEl = commentBody.querySelector('.comment-actions');
+                    const editFormContainer = commentBody.querySelector('.edit-form-container');
+                    if (!commentContentEl || !commentActionsEl || !editFormContainer || editFormContainer.innerHTML) return;
+                    const originalContent = commentContentEl.textContent;
+                    commentContentEl.style.display = 'none'; commentActionsEl.style.display = 'none';
+                    editFormContainer.innerHTML = `<form class="edit-comment-form" data-comment-id="${editCommentBtn.closest('.comment')?.dataset.commentId}"><input type="text" value="${originalContent}" required><button type="submit" class="btn btn-primary">Salvar</button><button type="button" class="btn btn-secondary cancel-edit-btn">Cancelar</button></form>`;
+                    editFormContainer.querySelector('input')?.focus();
+                }
+                else if (cancelEditBtn) { 
+                    const commentBody = cancelEditBtn.closest('.comment-body'); if(!commentBody) return;
+                    const contentEl = commentBody.querySelector('.comment-content'); if(contentEl) contentEl.style.display = 'block';
+                    const actionsEl = commentBody.querySelector('.comment-actions'); if(actionsEl) actionsEl.style.display = 'flex';
+                    const editContainer = commentBody.querySelector('.edit-form-container'); if(editContainer) editContainer.innerHTML = '';
+                }
+                else if (deleteArticleBtn) await handleDeleteArticle(deleteArticleBtn.dataset.articleId);
+                else if (editArticleBtn) handleEditArticle(editArticleBtn.dataset.articleId);
+                
+                else if (messageAuthorBtn) {
+                    if (!currentUser) {
+                        alert('Você precisa estar logado para enviar uma mensagem.');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    const authorId = messageAuthorBtn.dataset.authorId;
+                    const authorName = messageAuthorBtn.dataset.authorName;
+                    
+                    resetMessageModal();
+                    if (messageForm) messageForm.dataset.receiverId = authorId;
+                    if (messageModalIntro) messageModalIntro.textContent = `Sua mensagem será enviada para ${authorName}.`;
+                    if (messageModal) messageModal.classList.add('visible');
+                }
+                // [NOVO] Lógica para abrir o modal de denúncia
+                else if (reportBtn) {
+                    const articleId = reportBtn.closest('.article-card')?.dataset.articleId;
+                    const commentId = reportBtn.closest('.comment')?.dataset.commentId;
+                    
+                    if (commentId) {
+                        // É uma denúncia de comentário
+                        openReportModal(
+                            'comment',
+                            commentId,
+                            reportBtn.dataset.contentName,
+                            `${window.location.origin}${window.location.pathname}?article=${articleId}#comment-${commentId}`
+                        );
+                    } else if (articleId) {
+                        // É uma denúncia de artigo
+                        openReportModal(
+                            'article',
+                            articleId,
+                            reportBtn.dataset.contentName,
+                            `${window.location.origin}${window.location.pathname}?article=${articleId}`
+                        );
+                    }
+                }
+             });
+
+             articlesContainer.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (e.target.classList.contains('comment-form')) {
+                    const form = e.target; const input = form.querySelector('input'); if(!input) return;
+                    const content = input.value.trim(); if (!content) return;
+                    const newCommentData = { content: content, article_id: form.dataset.articleId, user_id: currentUser.id, parent_comment_id: form.dataset.parentCommentId || null };
+                     if (!newCommentData.parent_comment_id || newCommentData.parent_comment_id === "null" || newCommentData.parent_comment_id === "undefined") newCommentData.parent_comment_id = null;
+                    const { data: insertedComment, error } = await sb.from('comments').insert(newCommentData).select().single();
+                    if (error) { console.error("Erro ao inserir comentário:", error); alert("Erro ao enviar comentário."); return; }
+                    input.value = '';
+                    if (form.dataset.parentCommentId) form.closest('.reply-form-container')?.remove();
+                    
+                    await fetchArticlesAndComments(); 
+                    renderUI(); 
+                    
+                    const articleCard = document.querySelector(`.article-card[data-article-id="${form.dataset.articleId}"]`);
+                    if(articleCard) {
+                         const commentsSection = articleCard.querySelector('.comments-section'); if(commentsSection) commentsSection.style.display = 'block';
+                         const toggleBtn = articleCard.querySelector('.comment-toggle-btn'); if(toggleBtn) toggleBtn.classList.add('active');
+                    }
+                    try { 
+                        const articleAuthorId = form.dataset.articleAuthorId; const articleId = form.dataset.articleId; const articleTitle = form.dataset.articleTitle || 'seu artigo';
+                        const parentCommentAuthorId = form.dataset.parentCommentAuthorId; const currentUserId = currentUser.id; const newCommentId = insertedComment.id;
+                        const commenterName = currentUser.profile.full_name || currentUser.profile.email || 'Alguém';
+                        const isAuthorValid = articleAuthorId && articleAuthorId !== "null" && articleAuthorId !== "undefined";
+                        const isParentAuthorValid = parentCommentAuthorId && parentCommentAuthorId !== "null" && parentCommentAuthorId !== "undefined";
+                        const notificationsToSend = [];
+                        if (isParentAuthorValid && parentCommentAuthorId !== currentUserId) {
+                             notificationsToSend.push(sb.rpc('create_notification_secure', { recipient_user_id: parentCommentAuthorId, notification_message: `${commenterName} respondeu ao seu comentário.`, target_article_id: articleId, target_comment_id: newCommentId }));
+                        }
+                        if (isAuthorValid && articleAuthorId !== currentUserId && articleAuthorId !== parentCommentAuthorId) {
+                             notificationsToSend.push(sb.rpc('create_notification_secure', { recipient_user_id: articleAuthorId, notification_message: isParentAuthorValid ? `${commenterName} também comentou no seu artigo: "${articleTitle}"` : `${commenterName} comentou no seu artigo: "${articleTitle}"`, target_article_id: articleId, target_comment_id: newCommentId }));
+                        }
+                        if (notificationsToSend.length > 0) await Promise.all(notificationsToSend);
+                    } catch (notifyError) { console.error('Erro ao processar notificação:', notifyError); }
+                }
+                else if (e.target.classList.contains('edit-comment-form')) {
+                    const form = e.target; const input = form.querySelector('input'); if(!input) return;
+                    const newContent = input.value.trim(); const commentId = form.dataset.commentId; if (!newContent || !commentId) return;
+                    const { error } = await sb.from('comments').update({ content: newContent }).eq('id', commentId);
+                    if (error) { console.error('Erro ao atualizar:', error); alert('Erro ao salvar edição.'); }
+                    else {
+                        const commentBody = form.closest('.comment-body');
+                        if(commentBody) {
+                             const contentEl = commentBody.querySelector('.comment-content'); if(contentEl) { contentEl.textContent = newContent; contentEl.style.display = 'block'; }
+                             const actionsEl = commentBody.querySelector('.comment-actions'); if(actionsEl) actionsEl.style.display = 'flex';
+                             const editContainer = commentBody.querySelector('.edit-form-container'); if(editContainer) editContainer.innerHTML = '';
+                        }
+                        const commentInCache = commentsByIdMap[commentId];
+                        if (commentInCache) commentInCache.content = newContent;
+                    }
+                }
+             });
+        }
+        
+        if(newTopicModalElement && openNewTopicModalBtn && closeNewTopicModalBtn){
+            openNewTopicModalBtn.addEventListener('click', () => { resetTopicModal(); newTopicModalElement.classList.add('visible'); });
+            closeNewTopicModalBtn.addEventListener('click', () => { newTopicModalElement.classList.remove('visible'); resetTopicModal(); });
+            newTopicModalElement.addEventListener('click', (e) => { if(e.target === newTopicModalElement) { newTopicModalElement.classList.remove('visible'); resetTopicModal(); } });
+        }
+        if(closeEbookModalBtn && ebookModalElement) {
+            closeEbookModalBtn.addEventListener('click', () => { ebookModalElement.classList.remove('visible'); resetEbookModal(); });
+            ebookModalElement.addEventListener('click', (e) => { if(e.target === ebookModalElement) { ebookModalElement.classList.remove('visible'); resetEbookModal(); } });
+        }
+        const openModalBtn = document.getElementById('open-modal-btn');
+        if(openModalBtn && articleModal) {
+            openModalBtn.addEventListener('click', () => { resetArticleModal(); articleModal.classList.add('visible'); });
+        }
+        if(closeModalBtn && articleModal) {
+            closeModalBtn.addEventListener('click', () => { articleModal.classList.remove('visible'); resetArticleModal(); });
+            articleModal.addEventListener('click', (e) => { if(e.target === articleModal) { articleModal.classList.remove('visible'); resetArticleModal(); } });
+        }
+
+
+        // ########## 6. REALTIME SUBSCRIPTIONS ##########
+        
+        function setupRealtimeSubscriptions() {
+             if (!currentUser) return;
+
+             const notificationChannel = sb.channel(`public:notifications:user_id=eq.${currentUser.id}`)
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, (payload) => { updateNotificationBadge(); })
+                .subscribe();
+
+             const ebookChannel = sb.channel('public:ebooks')
+              .on('postgres_changes', { event: '*', schema: 'public', table: 'ebooks' }, async (payload) => {
+                  console.log('Mudança detectada nos e-books, atualizando...');
+                  await fetchEbooks(); 
+                  renderUI(); 
+              })
+              .subscribe();
+
+            const topicChannel = sb.channel('public:forum_topics')
+              .on('postgres_changes', { event: '*', schema: 'public', table: 'forum_topics' }, async (payload) => {
+                  console.log('Mudança detectada nos tópicos, atualizando...');
+                  await fetchTopics(); 
+                  renderUI(); 
+              })
+              .subscribe();
+
+            const articleChannel = sb.channel(`public:${TABELA_ARTIGOS}`)
+              .on('postgres_changes', { event: '*', schema: 'public', table: TABELA_ARTIGOS }, async (payload) => {
+                  console.log('Mudança detectada nos artigos, atualizando...');
+                  await fetchArticlesAndComments(); 
+                  renderUI(); 
+              })
+              .subscribe();
+
+             const commentChannel = sb.channel('public:comments')
+               .on('postgres_changes', { event: '*', schema: 'public', table: 'comments' }, async (payload) => {
+                   console.log('Mudança detectada nos comentários, atualizando...');
+                   await fetchArticlesAndComments(); 
+                   renderUI(); 
+               })
+               .subscribe();
+
+             const likeChannel = sb.channel('public:article_likes')
+               .on('postgres_changes', { event: '*', schema: 'public', table: 'article_likes' }, async (payload) => {
+                   console.log('Mudança detectada nos likes, atualizando...');
+                   await fetchArticlesAndComments(); 
+                   renderUI(); 
+               })
+               .subscribe();
+        }
+
+        // --- INICIALIZAÇÃO ---
+        setupPage();
+    </script>
+    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="comunidade.css">
+</body>
+</html>

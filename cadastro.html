@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crie sua Conta - Projeto Vida Plena</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+
+</head>
+<body>
+    <script>
+        (function() {
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        })();
+    </script>
+   <header class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo"> <i data-lucide="leaf"></i> Vida Plena </a>
+            
+            <nav class="main-nav" id="main-nav">
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="index.html#pilares">O Projeto</a></li>
+                    <li><a href="index.html#desafios">Desafios</a></li>
+                    <li><a href="comunidade.html">Comunidade</a></li>
+                    <li><a href="index.html#evento">O Evento</a></li>
+                </ul>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu"> <i data-lucide="menu"></i> </button>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+        <div class="auth-container">
+            <div class="auth-panel-image"></div>
+            <div class="auth-panel-form">
+                <a href="index.html" class="auth-logo"> <i data-lucide="leaf"></i> Vida Plena </a>
+                <h1>Crie sua Conta</h1>
+                <p>Junte-se à nossa comunidade para uma vida mais saudável.</p>
+                
+                <form id="register-form">
+                    <div class="progress-bar">
+                        <div class="progress-step active" data-step="1">1. Conta</div>
+                        <div class="progress-step" data-step="2">2. Perfil</div>
+                    </div>
+                    <fieldset id="step-1" class="form-step active">
+                        <div class="form-group input-with-icon">
+                            <i data-lucide="mail"></i>
+                            <input type="email" id="email" placeholder="Seu e-mail" required>
+                        </div>
+                        <div class="form-group input-with-icon">
+                            <i data-lucide="lock"></i>
+                            <input type="password" id="password" placeholder="Crie uma senha (mín. 6 caracteres)" minlength="6" required>
+                        </div>
+                        <button type="button" id="btn-next-step" class="btn btn-primary">Próximo</button>
+                    </fieldset>
+                    <fieldset id="step-2" class="form-step">
+                        <div class="form-group input-with-icon">
+                            <i data-lucide="user"></i>
+                            <input type="text" id="user-name" placeholder="Como podemos te chamar?" required>
+                        </div>
+                        <p style="font-size: 0.8rem; text-align: center; margin-top: -10px; margin-bottom: 20px;">Isso aparecerá no seu perfil da comunidade.</p>
+                        <button type="submit" class="btn btn-primary">Concluir e Entrar</button>
+                    </fieldset>
+                </form>
+
+                <div class="divider">ou</div>
+                <div class="social-login">
+                    <button class="btn" id="google-login-btn"><img src="https://www.google.com/favicon.ico" width="16" alt="Google icon"> Continuar com Google</button>
+                </div>
+                <div class="auth-switch">
+                    <p>Já tem uma conta? <a href="login.html">Faça login</a></p>
+                </div>
+                <div id="feedback-message"></div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-col footer-about">
+                    <a href="index.html" class="logo"> <i data-lucide="leaf"></i> Vida Plena </a>
+                    <p>Um projeto de TCC para uma vida mais saudável, combatendo o sedentarismo e a desinformação.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navegação</h4>
+                    <ul>
+                        <li><a href="index.html#pilares">O Projeto</a></li>
+                        <li><a href="comunidade.html">Comunidade</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="index.html#sobre">Sobre a Equipe</a></li>
+                        <li><a href="index.html#evento">Nosso Evento</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Siga-nos</h4>
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/tcc.adm.24/" target="_blank"><i data-lucide="instagram"></i></a>
+                        <a href="#"><i data-lucide="facebook"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom"> <p>&copy; 2025 Projeto Vida Plena.</p> </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            // --- SCRIPT DO MENU MOBILE ---
+            const menuToggle = document.getElementById('menu-toggle');
+            const navLinks = document.getElementById('nav-links');
+            const navLinksAnchors = navLinks?.querySelectorAll('a'); 
+
+            const toggleMenu = () => {
+                if (!navLinks || !menuToggle) return;
+                navLinks.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                if (icon) {
+                     icon.setAttribute('data-lucide', navLinks.classList.contains('active') ? 'x' : 'menu');
+                     lucide.createIcons();
+                }
+            };
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', toggleMenu);
+            }
+
+            if (navLinksAnchors) {
+                navLinksAnchors.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        const href = link.getAttribute('href');
+                        if (href && (href.includes('.html') || href.startsWith('index.html#'))) {
+                           if (navLinks.classList.contains('active')) {
+                               toggleMenu();
+                           }
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+    <script type="module" src="auth.js"></script>
+    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="cadastro.css">
+</body>
+</html>

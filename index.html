@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Vida Plena - Contra o Sedentarismo e a Desinformação</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+<body>
+    <script>
+        (function() {
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
+    <header class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo"> <i data-lucide="leaf"></i> Vida Plena</a>
+            <nav class="main-nav" id="main-nav">
+                <ul class="nav-links" id="nav-links">
+                    <li><a href="#pilares">Projeto</a></li>
+                    <li><a href="#desafios">Desafios</a></li>
+                    <li><a href="#metodologia">Metodologia</a></li>
+                    <li><a href="#artigos">Destaques</a></li>
+                    <li><a href="comunidade.html">Comunidade</a></li>
+                    <li><a href="#evento">Evento</a></li>
+                    <li><a href="#sobre">Equipe</a></li>
+                    </ul>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu"> <i data-lucide="menu"></i> </button>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-image-bg"></div>
+        <div class="hero-content container hidden">
+            <h1>Contra o Sedentarismo e a Desinformação.</h1>
+            <p>Este é o portal do nosso projeto de TCC, dedicado a promover um estilo de vida ativo e a combater as fake news na área da saúde.</p>
+            <a href="#pilares" class="btn btn-primary">Conheça Nossos Pilares</a>
+        </div>
+    </section>
+
+    <section id="pilares" class="section">
+        <div class="container">
+            <div class="section-header hidden">
+                <h2>Os Pilares do Nosso Projeto</h2>
+                <p>Nossa missão se baseia em três pilares essenciais para construir um caminho de transformação para uma saúde plena e duradoura.</p>
+            </div>
+            <div class="pillars-grid">
+                <div class="pillar-item hidden"> <i data-lucide="shield-check" class="icon"></i> <h3>Informação Confiável</h3> <p>Combatemos a desinformação e as fake news, oferecendo orientações sobre saúde e nutrição baseadas em ciência e fontes seguras.</p> </div>
+                <div class="pillar-item hidden"> <i data-lucide="footprints" class="icon"></i> <h3>Incentivo ao Movimento</h3> <p>Promovemos atividades físicas acessíveis, como caminhadas e corridas, para combater o sedentarismo e motivar um estilo de vida ativo.</p> </div>
+                <div class="pillar-item hidden"> <i data-lucide="users" class="icon"></i> <h3>Comunidade e Apoio</h3> <p>Acreditamos na força da comunidade. Incentivamos o apoio de amigos e familiares para criar um ambiente de motivação e suporte mútuo.</p> </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="desafios" class="section section-light">
+        <div class="container">
+            <div class="section-header hidden">
+                <h2>Entendendo os Desafios</h2>
+                <p>Informação é a melhor ferramenta para a mudança. Saiba mais sobre os dois grandes obstáculos que nosso projeto busca superar.</p>
+            </div>
+            <div class="challenge-grid">
+                <div class="challenge-item hidden"> <h3>O Perigo da Desinformação</h3> <p><strong>O que são as "Fake News" da saúde?</strong> São informações falsas, como dietas milagrosas e curas sem comprovação, que se espalham rapidamente e colocam a vida das pessoas em risco.</p> <p><strong>Dado da nossa pesquisa:</strong> Em nosso estudo, <strong>60% dos jovens</strong> afirmaram que precisam de mais orientação confiável, mostrando a urgência em combater este problema.</p> <h4>Como Combater:</h4> <ul> <li><i data-lucide="search-check"></i> <strong>Verifique a fonte:</strong> A informação vem de um especialista ou órgão de saúde?</li> <li><i data-lucide="message-square-quote"></i> <strong>Desconfie de promessas fáceis:</strong> Soluções rápidas e milagrosas raramente são verdadeiras.</li> <li><i data-lucide="stethoscope"></i> <strong>Consulte um profissional:</strong> Antes de mudar sua rotina, converse com médicos ou nutricionistas.</li> </ul> </div>
+                <div class="challenge-item hidden"> <h3>O Impacto do Sedentarismo</h3> <p><strong>O que é sedentarismo?</strong> É a falta ou a grande diminuição de atividade física. Não é apenas não praticar esportes, mas ter um estilo de vida com pouco movimento, o que aumenta o risco de doenças.</p> <p><strong>Dado Alarmante:</strong> Segundo a OMS, <strong>quase metade (47%) da população adulta</strong> no Brasil não pratica atividade física suficiente, tornando o país um dos mais sedentários do mundo.</p> <h4>Como Combater:</h4> <ul> <li><i data-lucide="step-forward"></i> <strong>Comece devagar:</strong> Uma caminhada de 15 minutos por dia já faz uma grande diferença.</li> <li><i data-lucide="smile"></i> <strong>Encontre o que você gosta:</strong> Dançar, pedalar, caminhar no parque. O importante é se sentir bem.</li> <li><i data-lucide="calendar-days"></i> <strong>Crie uma rotina:</strong> Defina metas pequenas e realistas para incluir o movimento no seu dia a dia.</li> </ul> </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pesquisa" class="section">
+        <div class="container">
+            <div class="section-header hidden">
+                <h2>O Que os Jovens Pensam?</h2>
+                <p>Realizamos uma pesquisa de campo com estudantes para entender suas percepções sobre saúde e bem-estar. Os resultados mostram um cenário claro de oportunidades e desafios.</p>
+            </div>
+            <div class="research-grid">
+                <div class="research-card hidden">
+                    <i data-lucide="help-circle" class="icon"></i>
+                    <h3>Necessidade de Orientação</h3>
+                    <span class="highlight">60%</span>
+                    <p>Dos entrevistados sentem que precisam de mais informações e orientações confiáveis para construir uma vida saudável no dia a dia.</p>
+                </div>
+                <div class="research-card hidden">
+                    <i data-lucide="instagram" class="icon"></i>
+                    <h3>Redes Sociais como Inspiração</h3>
+                    <span class="highlight">70%</span>
+                    <p>Enxergam as redes sociais de forma positiva, como uma fonte de inspiração e motivação para hábitos mais saudáveis.</p>
+                </div>
+                <div class="research-card hidden">
+                    <i data-lucide="alert-triangle" class="icon"></i>
+                    <h3>O Risco dos "Padrões"</h3>
+                    <span class="highlight">10%</span>
+                    <p>Já demonstram uma percepção negativa, destacando a pressão estética e os padrões de corpo e comportamento irreais disseminados online.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="acoes" class="section section-light">
+        <div class="container">
+            <div class="section-header hidden"> <h2>Nossas Ações Práticas</h2> <p>Para transformar a teoria em realidade, nosso projeto propõe ações concretas para engajar e educar a comunidade.</p> </div>
+            <div class="actions-grid">
+                <div class="action-item hidden"> <h3>Campanhas Educativas Online</h3> <p>Utilizamos as redes sociais e este site para realizar divulgações e palestras online, permitindo que especialistas esclareçam dúvidas e ofereçam orientações baseadas em ciência, combatendo diretamente a desinformação.</p> </div>
+                <div class="action-item hidden"> <h3>Eventos Comunitários de Caminhada</h3> <p>Planejamos e promovemos eventos como caminhadas e maratonas públicas. Essas ações incentivam a prática de atividade física de forma coletiva, gerando motivação e fortalecendo os laços da comunidade.</p> </div>
+                <div class="action-item hidden"> <h3>Nutrição como Aliada</h3> <p>Em todas as nossas ações, reforçamos a importância de uma alimentação equilibrada como pilar para uma vida saudável, oferecendo informações práticas e desmistificando dietas restritivas e perigosas.</p> </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="prioridades" class="section">
+        <div class="container">
+            <div class="section-header hidden">
+                <h2>Nossas Prioridades</h2>
+                <p>Usando a Matriz GUT (Gravidade, Urgência, Tendência), definimos os problemas mais críticos que nosso projeto precisa atacar. Isso garante que nosso foco esteja onde o impacto é maior.</p>
+            </div>
+            <div class="priority-grid">
+                <div class="priority-card hidden">
+                    <i data-lucide="shield-off" class="icon"></i>
+                    <h3>TOP 1: Combater a Desinformação</h3>
+                    <p>É nossa prioridade máxima devido ao seu alto risco para a saúde pública. A circulação de fake news é constante e tende a crescer, exigindo uma ação imediata e contínua.</p>
+                </div>
+                <div class="priority-card hidden">
+                    <i data-lucide="couch" class="icon"></i>
+                    <h3>TOP 2: Incentivar o Movimento</h3>
+                    <p>O sedentarismo impacta diretamente a saúde física e mental. Agir contra ele é urgente para prevenir doenças crônicas e melhorar a qualidade de vida da população.</p>
+                </div>
+                 <div class="priority-card hidden">
+                    <i data-lucide="megaphone" class="icon"></i>
+                    <h3>TOP 3: Aumentar o Engajamento</h3>
+                    <p>Garantir a adesão da comunidade é crucial. Sem uma boa divulgação e eventos atrativos, o alcance do projeto diminui e a transformação que buscamos não acontece.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="metodologia" class="section section-light">
+        <div class="container">
+            <div class="section-header hidden"> <h2>Metodologia do Projeto</h2> <p>Para garantir a eficiência e a organização do nosso trabalho, utilizamos ferramentas de gestão e planejamento estratégico. Explore cada uma delas clicando nas abas abaixo.</p> </div>
+
+            <div class="tabs-container hidden">
+                <div class="tabs-nav">
+                    <button class="tab-btn active" data-tab="swot">Análise SWOT</button>
+                    <button class="tab-btn" data-tab="ishikawa">Diagrama de Ishikawa</button>
+                    <button class="tab-btn" data-tab="pert">PERT/CPM</button>
+                </div>
+
+                <div id="swot" class="tab-content active">
+                    <div class="methodology-block">
+                        <p>Identificamos nossas Forças, Fraquezas, Oportunidades e Ameaças para construir uma estratégia sólida e aumentar as chances de sucesso do projeto.</p>
+                        <div class="swot-grid">
+                            <div class="swot-quadrant strengths"><h4><i data-lucide="thumbs-up"></i>Forças</h4><ul><li>Estrutura técnica bem planejada</li><li>Foco em sustentabilidade ambiental</li><li>Engajamento com a comunidade</li><li>Transparência financeira</li></ul></div>
+                            <div class="swot-quadrant weaknesses"><h4><i data-lucide="thumbs-down"></i>Fraquezas</h4><ul><li>Dependência de autorizações públicas</li><li>Custo elevado de estrutura e pessoal</li><li>Necessidade de apoio logístico</li><li>Risco de baixa adesão sem boa divulgação</li></ul></div>
+                            <div class="swot-quadrant opportunities"><h4><i data-lucide="lightbulb"></i>Oportunidades</h4><ul><li>Parcerias com empresas locais</li><li>Alinhamento com tendências de saúde</li><li>Geração de impacto positivo duradouro</li><li>Fortalecimento da imagem pública</li></ul></div>
+                            <div class="swot-quadrant threats"><h4><i data-lucide="alert-triangle"></i>Ameaças</h4><ul><li>Conflito de datas com outros eventos</li><li>Falta de patrocínio e recursos</li><li>Condições climáticas desfavoráveis</li></ul></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="ishikawa" class="tab-content">
+                    <div class="methodology-block">
+                        <p>Utilizamos o Diagrama de Ishikawa (ou Espinha de Peixe) para mapear as causas que levam à dificuldade da população em adotar hábitos saudáveis.</p>
+                        <div class="ishikawa-diagram">
+                            <div class="ishikawa-container"></div>
+                            <div class="ishikawa-mobile-view"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pert" class="tab-content">
+                     <div class="methodology-block">
+                        <p>Com o PERT/CPM, organizamos as etapas do projeto em uma ordem lógica, definindo o "caminho crítico" para garantir que as tarefas essenciais fossem executadas no tempo certo.</p>
+                        <div class="pert-path">
+                            <div class="pert-step"><i data-lucide="clipboard-list"></i><span>Planejamento</span><small>Definição de objetivos</small></div>
+                            <div class="pert-arrow"><i data-lucide="arrow-right"></i></div>
+                            <div class="pert-step"><i data-lucide="check-check"></i><span>Viabilidade</span><small>Análise técnica e de mercado</small></div>
+                            <div class="pert-arrow"><i data-lucide="arrow-right"></i></div>
+                            <div class="pert-step"><i data-lucide="megaphone"></i><span>Campanhas</span><small>Divulgação e conscientização</small></div>
+                            <div class="pert-arrow"><i data-lucide="arrow-right"></i></div>
+                            <div class="pert-step"><i data-lucide="flag"></i><span>Evento</span><small>Execução da caminhada</small></div>
+                            <div class="pert-arrow"><i data-lucide="arrow-right"></i></div>
+                            <div class="pert-step"><i data-lucide="file-text"></i><span>Avaliação</span><small>Análise de resultados</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="artigos" class="section">
+        <div class="container">
+            <div class="section-header hidden">
+                <h2>Artigos em Destaque</h2>
+                <p>Conteúdo criado para guiar você, incluindo o mais curtido pela nossa comunidade.</p>
+            </div>
+            <div class="carousel-container hidden">
+                <div class="articles-carousel-wrapper">
+                    <div class="articles-carousel" id="articles-carousel">
+                        <p style="text-align: center; width: 100%; color: var(--text-light);">Carregando artigos em destaque...</p>
+                    </div>
+                    </div>
+                <button class="carousel-button prev" id="carousel-prev" aria-label="Artigo anterior"><i data-lucide="chevron-left"></i></button>
+                <button class="carousel-button next" id="carousel-next" aria-label="Próximo artigo"><i data-lucide="chevron-right"></i></button>
+            </div>
+        </div>
+    </section>
+    <section id="evento" class="section section-light">
+        <div class="container">
+            <div class="section-header hidden">
+                <h2>Nossa Primeira Caminhada e Corrida-Fé Pela Saúde!</h2>
+                <p>Veja os melhores momentos do nosso evento, que uniu dezenas de pessoas em um dia inesquecível de movimento e conscientização.</p>
+            </div>
+            <div class="event-layout hidden">
+                <div class="event-main-content">
+                    <div class="event-details">
+                        <h3>Nossa Primeira Caminhada e Corrida-Fé Pela Saúde!</h3>
+                        <ul class="event-meta">
+                            <li><i data-lucide="calendar"></i> <strong>Data:</strong> Domingo, 26 de Outubro de 2025</li>
+                            <li><i data-lucide="map-pin"></i> <strong>Local:</strong> Praça Santo Antônio, Igreja Matriz, Caieiras - SP.</li>
+                            <li><i data-lucide="route"></i> <strong>Percurso:</strong> 7km de Corrida, 3Km de caminhada.</li>
+                        </ul>
+                        <p>Prepare-se para mais caminhada e corrida, próximo grande encontro! Reuniremos famílias, amigos e vizinhos para mais um passo importante contra o sedentarismo. Será um dia repleto de sorrisos, superação e a prova de que juntos somos mais fortes. A participação é gratuita!</p>
+                        <a href="https://chat.whatsapp.com/Fc1O7o2ipnB27v7X8kA4zK?mode=wwt" target="_blank" class="btn btn-primary" style="margin-top: 20px;">
+                            <i data-lucide="users" style="width:18px; margin-right: 8px;"></i>
+                            Inscreva-se no Grupo!
+                        </a>
+                    </div>
+                    
+                    <div class="event-gallery">
+    <img src="evento-kits.jpg" alt="Kits da 1ª Corrida e Caminhada da Fé de Caieiras">
+    
+    <img src="evento-corrida-1.jpg" alt="Participantes correndo na estrada">
+    
+    <img src="evento-corrida-2.jpg" alt="Participante correndo durante o percurso">
+    
+    <video controls muted loop playsinline style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; box-shadow: var(--shadow);" alt="Vídeo da chegada de um participante">
+        <source src="evento-chegada.mp4" type="video/mp4">
+        Seu navegador não suporta o vídeo.
+    </video>
+</div>
+                    </div>
+                 <div class="testimonials-container">
+                    <h4>O que os participantes disseram:</h4>
+                    <div class="testimonial-grid">
+                        <div class="testimonial-card">
+                            <p>"A energia do evento foi contagiante! Foi a primeira vez que participei de algo assim e já estou ansioso(a) pela próxima. Me motivou a começar a caminhar todos os dias."</p>
+                            <div class="author">- Ana Silva</div>
+                        </div>
+                        <div class="testimonial-card">
+                            <p>"Excelente organização e uma causa muito nobre. É ótimo ver jovens tão engajados com a saúde da comunidade. Parabéns a toda a equipe do projeto!"</p>
+                            <div class="author">- Carlos Pereira</div>
+                        </div>
+                        <div class="testimonial-card">
+                            <p>"Levei minha família e foi um domingo diferente e muito especial. As crianças adoraram! Uma iniciativa que une as pessoas e promove o bem-estar. Precisamos de mais ações como essa."</p>
+                            <div class="author">- Paulo Oliveira</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   <section id="videos" class="section">
+    <div class="container">
+        <div class="section-header hidden">
+            <h2>Nossos Vídeos: Motivacionais</h2>
+            <p>Aqui você encontrará vídeos práticos e motivadores.</p>
+        </div>
+        <div class="video-showcase hidden">
+            <video controls muted loop playsinline
+                   style="width: 100%; max-width: 800px; border-radius: 15px; box-shadow: var(--shadow-hover); aspect-ratio: 16 / 9; background-color: #000;">
+                
+                <source src="U1CL66UXGGP5YI4A (online-video-cutter.com).mp4" type="video/mp4">
+                Seu navegador não suporta o formato de vídeo.
+            </video>
+        </div>
+    </div>
+</section>
+
+    <section id="sobre" class="section section-light">
+        <div class="container">
+            <div class="section-header hidden">
+                <h2>A Equipe do Projeto</h2>
+                <p>Este site é o resultado do nosso Trabalho de Conclusão de Curso (TCC) em Técnico em Administração, realizado na <strong>E.E. Alfriéd Theodor Weiszflog</strong> em Caieiras. Nosso objetivo é aplicar nossos conhecimentos para criar um projeto de impacto social.</p>
+                <div class="team-grid">
+                    <div class="team-member-card hidden"> <div class="photo-placeholder"><i data-lucide="user-circle-2" style="width: 60px; height: 60px;"></i></div> <h4>Maria Clara</h4> <span>Líder</span> </div>
+                    <div class="team-member-card hidden"> <div class="photo-placeholder"><i data-lucide="user-circle-2" style="width: 60px; height: 60px;"></i></div> <h4>Eliana</h4> <span>Vice-Líder</span> </div>
+                    <div class="team-member-card hidden"> <div class="photo-placeholder"><i data-lucide="user-circle-2" style="width: 60px; height: 60px;"></i></div> <h4>Gustavo</h4> <span>Marketing</span> </div>
+                    <div class="team-member-card hidden"> <div class="photo-placeholder"><i data-lucide="user-circle-2" style="width: 60px; height: 60px;"></i></div> <h4>Luis Felipe</h4> <span>Logística</span> </div>
+                    <div class="team-member-card hidden"> <div class="photo-placeholder"><i data-lucide="user-circle-2" style="width: 60px; height: 60px;"></i></div> <h4>Douglas</h4> <span>Logística</span> </div>
+                    <div class="team-member-card hidden"> <div class="photo-placeholder"><i data-lucide="user-circle-2" style="width: 60px; height: 60px;"></i></div> <h4>João Vitor</h4> <span>Financeiro</span> </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contato" class="section">
+        <div class="container">
+            <div class="cta-section hidden">
+                <div class="cta-image">
+                    <img src="logo.png" alt="Logo Em Busca De Uma Vida Saudável" >
+                </div>
+                <div class="cta-content">
+                    <h2>Conecte-se Conosco!</h2>
+                    <p>Acompanhe nosso projeto de perto, tire dúvidas e participe das nossas ações. Siga-nos nas redes sociais ou junte-se ao nosso grupo no WhatsApp.</p>
+                    <div class="social-buttons">
+                        <a href="https://www.instagram.com/tcc.adm.24/" target="_blank" class="social-btn instagram"><i data-lucide="instagram"></i> Instagram</a>
+                        <a href="https://chat.whatsapp.com/Fc1O7o2ipnB27v7X8kA4zK?mode=wwt" target="_blank" class="social-btn whatsapp">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path><path d="M14.05 2.95A10 10 0 0 1 20 8.9m-8 8a10 10 0 0 1-5.95-1.95"></path></svg>
+                            WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-col footer-about">
+                    <a href="index.html" class="logo"> <i data-lucide="leaf"></i> Vida Plena </a>
+                    <p>Um projeto de TCC para uma vida mais saudável, combatendo o sedentarismo e a desinformação.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navegação</h4>
+                    <ul>
+                        <li><a href="#pilares">O Projeto</a></li>
+                        <li><a href="#desafios">Desafios</a></li>
+                        <li><a href="#metodologia">Metodologia</a></li>
+                        <li><a href="#artigos">Destaques</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="#sobre">Sobre a Equipe</a></li>
+                        <li><a href="#evento">Nosso Evento</a></li>
+                        <li><a href="comunidade.html">Comunidade</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Siga-nos</h4>
+                    <div class="footer-social">
+                        <a href="https://www.instagram.com/tcc.adm.24/" target="_blank" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i data-lucide="facebook"></i></a>
+                        <a href="#" aria-label="Youtube"><i data-lucide="youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom"> <p>&copy; 2025 Projeto Vida Plena. Todos os direitos reservados.</p> </div>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="article-modal"> <div class="modal-content">
+            <button class="modal-close" id="modal-close-btn" aria-label="Fechar modal"><i data-lucide="x"></i></button>
+            <div class="modal-header">
+                <img id="modal-img" src="" alt="Imagem do artigo">
+                <h2 id="modal-title"></h2>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer">
+                <button id="download-article-btn" class="btn btn-secondary">
+                    <i data-lucide="download" style="width:18px; margin-right: 8px;"></i>
+                    Baixar Artigo (PDF)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="video-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="video-modal-close-btn" aria-label="Fechar modal"><i data-lucide="x" style="color: white;"></i></button>
+            <div id="video-container"></div>
+        </div>
+    </div>
+
+    <a href="#" id="back-to-top" aria-label="Voltar ao topo"><i data-lucide="arrow-up"></i></a>
+
+    <script type="module">
+        const SUPABASE_URL = 'https://iuyapkycjgmyvxlpycdd.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1eWFwa3ljamdteXZ4bHB5Y2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExMTYwODUsImV4cCI6MjA3NjY5MjA4NX0.VlLOoSnNvaWoMFtof6zaLUgWC60bCBJT_ckdI7GRFkM';
+        const { createClient } = supabase;
+        const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let carouselInitialized = false; 
+
+        function initializeCarousel() {
+            if (carouselInitialized) return; 
+
+            const carouselContainer = document.querySelector('.carousel-container');
+            if (!carouselContainer) return;
+
+            const carousel = document.getElementById('articles-carousel');
+            const prevButton = document.getElementById('carousel-prev');
+            const nextButton = document.getElementById('carousel-next');
+
+            if (!carousel || !prevButton || !nextButton) {
+                console.error("Elementos do carrossel não encontrados.");
+                return;
+            }
+
+            let cards = Array.from(carousel.children);
+            if (cards.length === 0) {
+                 console.warn("Carrossel não tem cards para inicializar.");
+                 prevButton.style.display = 'none';
+                 nextButton.style.display = 'none';
+                 return;
+            }
+
+            let currentIndex = 0;
+            let intervalId;
+
+            const getVisibleCardsCount = () => {
+                const width = window.innerWidth;
+                if (width < 768) return 1;
+                if (width < 992) return 2;
+                return 3;
+            };
+
+            const updateCarouselPosition = (withTransition = true) => {
+                cards = Array.from(carousel.children); 
+                if (cards.length === 0) return;
+
+                const visibleCards = getVisibleCardsCount();
+                const maxIndex = Math.max(0, cards.length - visibleCards);
+
+                if (maxIndex <= 0 && cards.length <= visibleCards) { 
+                     prevButton.style.display = 'none';
+                     nextButton.style.display = 'none';
+                     carousel.style.transform = `translateX(0px)`;
+                     if(cards.length < visibleCards) {
+                          carousel.style.justifyContent = 'center';
+                     } else {
+                          carousel.style.justifyContent = 'flex-start';
+                     }
+                     return;
+                 } else {
+                     prevButton.style.display = 'flex';
+                     nextButton.style.display = 'flex';
+                     carousel.style.justifyContent = 'flex-start';
+                 }
+
+                currentIndex = Math.max(0, Math.min(currentIndex, maxIndex));
+
+                const cardWidth = cards[0].offsetWidth;
+                const gapStyle = window.getComputedStyle(carousel).gap;
+                const gap = gapStyle ? parseInt(gapStyle) : 30;
+                const offset = currentIndex * (cardWidth + gap);
+
+                carousel.style.transition = withTransition ? 'transform 0.5s ease-in-out' : 'none';
+                carousel.style.transform = `translateX(-${offset}px)`;
+
+                prevButton.disabled = currentIndex === 0;
+                nextButton.disabled = currentIndex === maxIndex;
+            };
+
+            const moveToIndexAndLoop = (index) => {
+                cards = Array.from(carousel.children); 
+                const visibleCards = getVisibleCardsCount();
+                const maxIndex = Math.max(0, cards.length - visibleCards);
+                if (maxIndex <= 0 && cards.length <= visibleCards) return; 
+
+                if(index > maxIndex) {
+                    currentIndex = 0; // Volta ao início
+                } else if (index < 0) {
+                    currentIndex = maxIndex; // Vai para o fim
+                } else {
+                    currentIndex = index;
+                }
+                updateCarouselPosition();
+            };
+
+            const startAutoScroll = () => {
+                stopAutoScroll(); 
+                const visibleCards = getVisibleCardsCount();
+                if(cards.length > visibleCards) { 
+                    intervalId = setInterval(() => {
+                        moveToIndexAndLoop(currentIndex + 1);
+                    }, 5000);
+                }
+            };
+
+            const stopAutoScroll = () => clearInterval(intervalId);
+
+            nextButton.addEventListener('click', () => {
+                moveToIndexAndLoop(currentIndex + 1);
+                startAutoScroll(); 
+            });
+
+            prevButton.addEventListener('click', () => {
+                moveToIndexAndLoop(currentIndex - 1);
+                startAutoScroll(); 
+            });
+
+            window.addEventListener('resize', () => {
+                setTimeout(() => updateCarouselPosition(false), 150);
+            });
+
+            carouselContainer.addEventListener('mouseenter', stopAutoScroll);
+            carouselContainer.addEventListener('mouseleave', startAutoScroll);
+
+             setTimeout(() => updateCarouselPosition(false), 150); 
+            startAutoScroll(); 
+
+            carouselInitialized = true; 
+        }
+
+
+        async function fetchAndRenderTopArticles() {
+            const carouselElement = document.getElementById('articles-carousel');
+            if (!carouselElement) {
+                console.error('Elemento do carrossel (#articles-carousel) não encontrado.');
+                return;
+            }
+
+            const { data: articles, error } = await sb
+                .from('community-articles')
+                .select('id, title, author_name, pdfUrl, likes, created_at, description, cover_image_url') 
+                .order('likes', { ascending: false, nullsFirst: false })
+                .limit(10); 
+
+            if (error) {
+                console.error("Erro ao buscar artigos em destaque:", error);
+                carouselElement.innerHTML = `<p style="text-align: center; width: 100%; color: var(--danger-color);">Erro ao carregar artigos.</p>`;
+                return;
+            }
+
+            if (!articles || articles.length === 0) {
+                console.log("Nenhum artigo encontrado para destacar.");
+                carouselElement.innerHTML = `<p style="text-align: center; width: 100%; color: var(--text-light);">Nenhum artigo publicado na comunidade ainda.</p>`;
+                return;
+            }
+
+            let allArticlesHtml = '';
+
+            articles.forEach((article, index) => {
+                let categoryText = 'Top Artigo';
+                
+                if (index === 0) {
+                    categoryText = 'Destaque da Comunidade';
+                }
+
+                const imgSrc = article.cover_image_url
+                    ? article.cover_image_url
+                    : 'https://placehold.co/600x400/FBF8F1/285430?text=Artigo'; 
+
+                const articleUrl = `comunidade.html?article=${article.id}`; 
+                const articleDescription = article.description ? (article.description.length > 100 ? article.description.substring(0, 100) + '...' : article.description) : 'Acesse a comunidade para ler o artigo.';
+
+                allArticlesHtml += `
+                <article class="card">
+                     <img src="${imgSrc}" alt="Capa do artigo ${article.title || ''}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/FBF8F1/285430?text=Artigo';">
+                     
+                     <div class="card-content">
+                        <span class="category">${categoryText}</span>
+                        <h3>${article.title || 'Título Indisponível'}</h3>
+                        <p style="font-size: 0.9em; color: var(--text-light); margin-bottom: 15px;">
+                           Por: ${article.author_name || 'Usuário Anônimo'} em ${new Date(article.created_at).toLocaleDateString()}
+                        </p>
+                        
+                        <p style="margin-bottom: 20px; flex-grow: 1; color: var(--text-light);">
+                            ${articleDescription}
+                        </p>
+                        
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: auto;">
+                            <a href="${articleUrl}" class="read-more-btn" style="margin: 0;">
+                                Ver na Comunidade <i data-lucide="arrow-right" style="width:18px;"></i>
+                            </a>
+                            <span style="display: inline-flex; align-items: center; gap: 5px; font-weight: bold; color: var(--green-dark);">
+                                <i data-lucide="thumbs-up" style="width: 16px;"></i> ${article.likes || 0}
+                            </span>
+                        </div>
+                     </div>
+                </article>
+                `;
+            });
+
+            carouselElement.innerHTML = allArticlesHtml;
+            lucide.createIcons(); 
+        }
+        
+        async function updateNotificationBadge(userId) {
+             if (!userId) return;
+            const { count, error } = await sb.from('notifications').select('*', { count: 'exact', head: true }).eq('user_id', userId).eq('is_read', false);
+            if (error) { console.error("Erro ao buscar notificações:", error); return; }
+
+            const badge = document.getElementById('notification-badge');
+            if (badge && count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'block';
+            } else if (badge) {
+                badge.style.display = 'none';
+            }
+        }
+
+        async function setupNav(session) {
+             const mainNav = document.getElementById('main-nav');
+            const navLinks = document.getElementById('nav-links');
+            if (!mainNav || !navLinks) return; 
+
+            mainNav.querySelectorAll('.dynamic-nav-item').forEach(item => item.remove());
+            navLinks.querySelectorAll('.dynamic-nav-item').forEach(item => item.remove());
+
+            if (session) {
+                const { data: profile, error: profileError } = await sb.from('profiles')
+                    .select('avatar_url, full_name')
+                    .eq('id', session.user.id)
+                    .single();
+
+                 if (profileError && profileError.code !== 'PGRST116') {
+                      console.error('Erro ao buscar perfil do usuário:', profileError);
+                 }
+
+                const profileName = profile?.full_name || 'Usuário';
+                const avatarUrl = profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileName[0])}&background=285430&color=fff&bold=true`;
+
+                const profileHtml = `
+                    <li class="dynamic-nav-item">
+                        <a href="perfil.html" class="nav-profile-link" style="display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--green-dark);">
+                            Meu Perfil
+                            <span id="notification-badge" class="notification-badge"></span>
+                            <img src="${avatarUrl}" alt="Foto de perfil" class="nav-avatar">
+                        </a>
+                    </li>
+                `;
+                navLinks.insertAdjacentHTML('beforeend', profileHtml);
+                updateNotificationBadge(session.user.id); 
+
+                const notificationChannel = sb.channel(`public:notifications:user_id=eq.${session.user.id}`)
+                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' },
+                    (payload) => {
+                        updateNotificationBadge(session.user.id);
+                    })
+                    .subscribe((status) => {
+                         if (status === 'CHANNEL_ERROR') { console.error('Erro no canal de notificações RT:', notificationChannel.error()); }
+                    });
+
+           } else {
+                // ========== BOTÃO LOGIN CORRIGIDO AQUI ==========
+                // Adiciona classes CSS para mostrar/esconder em desktop vs mobile
+                mainNav.insertAdjacentHTML('beforeend', `<a href="login.html" class="btn-nav dynamic-nav-item btn-desktop-login">Login</a>`);
+                navLinks.insertAdjacentHTML('beforeend', `<li class="dynamic-nav-item btn-mobile-login"><a href="login.html" class="btn-nav">Login</a></li>`);
+            }
+             lucide.createIcons(); 
+        }
+
+        async function setupPage() {
+             const { data: { session } } = await sb.auth.getSession();
+             setupNav(session); 
+             
+             await fetchAndRenderTopArticles(); 
+             initializeCarousel(); 
+        }
+
+        document.addEventListener('DOMContentLoaded', setupPage);
+
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+
+        const menuToggle = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+        const navLinksAnchors = navLinks?.querySelectorAll('a'); 
+
+        const toggleMenu = () => {
+            if (!navLinks || !menuToggle) return;
+            navLinks.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            if (icon) {
+                 icon.setAttribute('data-lucide', navLinks.classList.contains('active') ? 'x' : 'menu');
+                 lucide.createIcons(); 
+            }
+        };
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', toggleMenu);
+        }
+
+        if (navLinksAnchors) {
+            navLinksAnchors.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const href = link.getAttribute('href');
+                    const isExternalPage = href && href.includes('.html');
+                    const isAnchorLink = href && href.startsWith('#');
+
+                    if (isAnchorLink && navLinks.classList.contains('active')) {
+                       toggleMenu();
+                    }
+                    else if (isExternalPage && navLinks.classList.contains('active')) {
+                       toggleMenu();
+                    }
+                });
+            });
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) entry.target.classList.add('show');
+            });
+        }, { threshold: 0.1 });
+        const hiddenElements = document.querySelectorAll('.hidden');
+        hiddenElements.forEach((el) => observer.observe(el));
+
+        const articleModal = document.getElementById('article-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        const closeArticleModal = () => {
+            if (articleModal) {
+                articleModal.classList.remove('active');
+            }
+            document.body.style.overflow = '';
+        };
+
+        if (modalCloseBtn) {
+            modalCloseBtn.addEventListener('click', closeArticleModal);
+        }
+        if (articleModal) {
+            articleModal.addEventListener('click', (e) => {
+                if (e.target === articleModal) closeArticleModal();
+            });
+        }
+
+        const playVideoBtn = document.getElementById('play-video-btn');
+        const videoModal = document.getElementById('video-modal');
+        const videoModalCloseBtn = document.getElementById('video-modal-close-btn');
+        const videoContainer = document.getElementById('video-container');
+
+        const openVideoModal = () => {
+            if (videoContainer) videoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/2G_K-g215mg?si=N-z1K2e1D6HkE1A7&autoplay=1&mute=1&controls=0&loop=1&playlist=2G_K-g215mg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+            if (videoModal) videoModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeVideoModal = () => {
+            if (videoContainer) videoContainer.innerHTML = '';
+            if (videoModal) videoModal.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        if (playVideoBtn) {
+            playVideoBtn.addEventListener('click', openVideoModal);
+        }
+        if (videoModalCloseBtn) {
+            videoModalCloseBtn.addEventListener('click', closeVideoModal);
+        }
+        if (videoModal) {
+            videoModal.addEventListener('click', (e) => {
+                if (e.target === videoModal) closeVideoModal();
+            });
+        }
+
+        const tabs = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetId = tab.dataset.tab;
+                const target = document.getElementById(targetId);
+
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                if (target) {
+                    target.classList.add('active');
+                } else {
+                    console.warn(`Tab content with ID "${targetId}" not found.`);
+                }
+            });
+        });
+
+        const causes = {
+            'Métodos': ['Campanhas não contínuas', 'Divulgação pouco atrativa', 'Falta de parcerias'],
+            'Tecnologia': ['Uso inadequado das redes', 'Falta de apps interativos', 'Baixo alcance orgânico'],
+            'Pessoas': ['Falta de motivação', 'Falta de apoio familiar', 'Desinteresse em buscar fontes'],
+            'Recursos': ['Orçamento limitado', 'Estrutura de apoio reduzida', 'Dependência de autorizações'],
+            'Sociedade': ['Excesso de fake news', 'Pressão estética irreal', 'Rotina corrida'],
+            'Gestão': ['Planejamento limitado', 'Pouca avaliação de impacto', 'Falta de indicadores']
+        };
+
+        const desktopContainer = document.querySelector('.ishikawa-container');
+        const mobileContainer = document.querySelector('.ishikawa-mobile-view');
+
+        if(desktopContainer && mobileContainer) {
+            desktopContainer.innerHTML = ''; 
+            mobileContainer.innerHTML = ''; 
+
+            const spine = document.createElement('div');
+            spine.className = 'ishikawa-spine';
+            desktopContainer.appendChild(spine);
+
+            const head = document.createElement('div');
+            head.className = 'ishikawa-head';
+            head.textContent = 'Problema'; 
+            desktopContainer.appendChild(head);
+
+            Object.keys(causes).forEach((key, index) => {
+                const isTop = index < 3;
+                const group = document.createElement('div');
+                group.className = 'ishikawa-bone-group ' + (isTop ? 'top' : 'bottom');
+                group.style.left = `${(index % 3) * 28 + 10}%`; 
+
+                const label = document.createElement('div');
+                label.className = 'label';
+                label.textContent = key;
+
+                const subCausesList = document.createElement('ul');
+                subCausesList.className = 'sub-causes';
+                causes[key].forEach(sub => {
+                    const li = document.createElement('li');
+                    li.textContent = sub;
+                    subCausesList.appendChild(li);
+                });
+
+                if (isTop) {
+                    group.appendChild(subCausesList);
+                    group.appendChild(label);
+                } else {
+                    group.appendChild(label);
+                    group.appendChild(subCausesList);
+                }
+                desktopContainer.appendChild(group);
+            });
+
+            Object.keys(causes).forEach(key => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'ishikawa-mobile-category';
+
+                const title = document.createElement('h4');
+                title.textContent = key;
+                categoryDiv.appendChild(title);
+
+                const list = document.createElement('ul');
+                causes[key].forEach(sub => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `• ${sub}`; 
+                    list.appendChild(listItem);
+                });
+                categoryDiv.appendChild(list);
+                mobileContainer.appendChild(categoryDiv);
+            });
+        }
+
+        const backToTopButton = document.getElementById('back-to-top');
+        if (backToTopButton) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopButton.classList.add('show');
+                } else {
+                    backToTopButton.classList.remove('show');
+                }
+            });
+            backToTopButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+    });
+    </script>
+    <link rel="stylesheet" href="style.css">
+</body>
+</html>

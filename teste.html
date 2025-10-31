@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Teste Supabase Storage</title>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://iuyapkycjgmyvxlpycdd.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1eWFwa3ljamdteXZ4bHB5Y2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExMTYwODUsImV4cCI6MjA3NjY5MjA4NX0.VlLOoSnNvaWoMFtof6zaLUgWC60bCBJT_ckdI7GRFkM';
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function testarBuckets() {
+  console.log("🔍 Testando acesso aos buckets Supabase...");
+
+  // Lista os buckets existentes
+  const { data: buckets, error: listError } = await sb.storage.listBuckets();
+  if (listError) {
+    console.error("❌ Erro ao listar buckets:", listError);
+    return;
+  }
+
+  console.log("📦 Buckets encontrados:", buckets.map(b => b.name));
+
+  // Testar o bucket 'ebooks'
+  const { data: ebooksList, error: ebooksError } = await sb.storage.from('ebooks').list();
+  if (ebooksError) {
+    console.error("❌ Erro no bucket 'ebooks':", ebooksError.message);
+  } else {
+    console.log(`✅ Bucket 'ebooks' acessível. ${ebooksList.length} arquivos encontrados.`);
+  }
+
+  // Testar o bucket 'community-articles'
+  const { data: articlesList, error: articlesError } = await sb.storage.from('community-articles').list();
+  if (articlesError) {
+    console.error("❌ Erro no bucket 'community-articles':", articlesError.message);
+  } else {
+    console.log(`✅ Bucket 'community-articles' acessível. ${articlesList.length} arquivos encontrados.`);
+  }
+}
+
+testarBuckets();
+</script>
+</head>
+<body>
+  <h1>Teste Supabase Storage</h1>
+  <p>Abra o console (F12 → Console) para ver os resultados.</p>
+</body>
+</html>

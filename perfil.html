@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - Projeto Vida Plena</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    
+</head>
+<body>
+    <script>
+        (function() {
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+        })();
+    </script>
+    
+    <header class="main-header">
+        <div class="container">
+            <a href="index.html" class="logo"> <i data-lucide="leaf"></i> Vida Plena </a>
+            <nav class="main-nav" id="main-nav">
+                <ul class="nav-links" id="nav-links">
+                   
+                    <li><a href="index.html#pilares">Projeto</a></li>
+                    <li><a href="index.html#desafios">Desafios</a></li>
+                    <li><a href="index.html#metodologia">Metodologia</a></li>
+                    <li><a href="index.html#artigos">Destaques</a></li>
+                    <li><a href="comunidade.html">Comunidade</a></li>
+                    <li><a href="index.html#evento">Evento</a></li>
+                    <li><a href="index.html#sobre">Equipe</a></li>
+                    </ul>
+                <button class="menu-toggle" id="menu-toggle" aria-label="Abrir menu"> 
+                    <i data-lucide="menu"></i> 
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container profile-layout">
+            <aside class="profile-nav">
+                
+                <div class="avatar-upload">
+                    <label for="avatar-input" class="avatar-edit">
+                        <i data-lucide="camera"></i>
+                    </label>
+                    <input type="file" id="avatar-input" accept="image/*">
+                    <img src="https://via.placeholder.com/120" alt="Foto de perfil" class="avatar-preview" id="avatar-preview">
+                </div>
+                <h2 id="display-name">Carregando...</h2>
+                <p id="display-email">...</p>
+
+                <ul class="profile-nav-links">
+                    <li><a href="#conta" class="nav-tab active"><i data-lucide="user"></i> Minha Conta</a></li>
+                    <li><a href="#amigos" class="nav-tab"><i data-lucide="users"></i> Amigos</a></li>
+                    <li><a href="#mensagens" class="nav-tab"><i data-lucide="message-square"></i> Mensagens</a></li>
+                    <li><a href="#conteudos" class="nav-tab"><i data-lucide="layout-grid"></i> Meus Conteúdos</a></li>
+                    <li>
+                        <a href="#notificacoes" class="nav-tab" id="notifications-tab-link">
+                            <i data-lucide="bell"></i> Notificações <span id="notification-count-sidebar" class="notification-count-sidebar"></span>
+                        </a>
+                    </li>
+                    <li><a href="#preferencias" class="nav-tab"><i data-lucide="sliders-horizontal"></i> Preferências</a></li>
+                    <li><a href="#seguranca" class="nav-tab"><i data-lucide="shield"></i> Segurança</a></li>
+                    <li><a href="#excluir" class="nav-tab"><i data-lucide="trash-2"></i> Excluir Conta</a></li>
+                    <li style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 20px;"><a id="logout-btn"><i data-lucide="log-out"></i> Sair</a></li>
+                </ul>
+            </aside>
+
+            <div class="profile-content">
+                <div id="conta-panel" class="tab-panel active">
+                    <div class="profile-card">
+                        <h3>Dados da Conta</h3>
+                        <form id="profile-form">
+                            <div class="form-group">
+                                <label for="full_name">Nome de Exibição</label>
+                                <input type="text" id="full_name" placeholder="Como você quer ser chamado(a)?">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">E-mail</label>
+                                <input type="email" id="email" disabled>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="user-id-display">Seu ID de Usuário (para amigos)</label>
+                                <div class="input-with-button">
+                                    <input type="text" id="user-id-display" disabled title="Seu ID de usuário único (não pode ser alterado)">
+                                    <button type="button" id="copy-user-id-btn" class="btn btn-secondary">
+                                        <i data-lucide="copy" style="width:16px; height: 16px; margin-right: 5px; vertical-align: middle;"></i>Copiar
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </form>
+                        <div id="feedback-message"></div>
+                    </div>
+                </div>
+
+                <div id="amigos-panel" class="tab-panel">
+                    <div class="profile-card">
+                        <h3>Adicionar Amigo</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 15px;">Adicione outros membros da comunidade usando o ID de usuário deles.</p>
+                        
+                        <form id="add-friend-form" class="inline-form">
+                            <input type="text" id="friend-id-input" placeholder="Digite o ID de usuário do seu amigo..." required>
+                            <button type="submit" class="btn btn-primary">Enviar Pedido</button>
+                        </form>
+                        
+                        <div id="friend-feedback-message"></div>
+                    </div>
+
+                    <div class="profile-card">
+                        <h3>Pedidos Pendentes</h3>
+                        <div class="friend-list" id="pending-friends-list">
+                            <p>Carregando...</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-card">
+                        <h3>Meus Amigos</h3>
+                        <div class="friend-list" id="accepted-friends-list">
+                            <p>Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="mensagens-panel" class="tab-panel">
+                    <div class="profile-card">
+                        <div class="chat-layout" id="chat-layout">
+                            
+                            <aside class="chat-sidebar">
+                                <div class="chat-sidebar-header">Conversas</div>
+                                <div class="chat-conversation-list" id="chat-conversation-list">
+                                    <p style="padding: 20px; text-align: center; color: var(--text-light);">Carregando...</p>
+                                </div>
+                            </aside>
+
+                            <main class="chat-window">
+                                <div id="chat-window-empty" class="chat-window-empty">
+                                    <i data-lucide="message-square"></i>
+                                    <p>Selecione uma conversa para começar.</p>
+                                </div>
+
+                                <div id="chat-window-active" style="display: none; height: 100%; display: flex; flex-direction: column;">
+                                    <div class="chat-window-header" id="chat-window-header">
+                                        <button id="chat-back-btn" class="chat-back-btn" title="Voltar">
+                                            <i data-lucide="arrow-left"></i>
+                                        </button>
+                                        <img src="https://via.placeholder.com/40" alt="Avatar" id="chat-header-avatar">
+                                        <div>
+                                            <strong id="chat-header-name">Nome do Usuário</strong>
+                                            <p id="chat-header-status" class="chat-header-status">Carregando...</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="chat-message-list" id="chat-message-list">
+                                    </div>
+                                    
+                                    <div class="chat-send-form-container">
+                                        <div id="reply-preview-bar" style="display: none;">
+                                            <div>
+                                                <strong>Respondendo a <span id="reply-author-name"></span></strong>
+                                                <p id="reply-content"></p>
+                                            </div>
+                                            <button id="cancel-reply-btn"><i data-lucide="x"></i></button>
+                                        </div>
+                                        <form class="chat-send-form" id="chat-send-form">
+                                            <input type="text" id="chat-message-input" placeholder="Digite sua mensagem..." autocomplete="off">
+                                            <button type="submit" class="btn">
+                                                <i data-lucide="send"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    
+                                </div>
+                            </main>
+
+                        </div>
+                    </div>
+                </div>
+                <div id="conteudos-panel" class="tab-panel">
+                    <div class="profile-card">
+                        <h3>Meus Artigos Publicados</h3>
+                        <div id="my-articles-list"><p>Carregando seus artigos...</p></div>
+                    </div>
+                </div>
+
+                <div id="notificacoes-panel" class="tab-panel">
+                    <div class="profile-card">
+                        <h3>Notificações</h3>
+                        <div id="notifications-list"><p>Nenhuma notificação ainda.</p></div>
+                    </div>
+                </div>
+                <div id="preferencias-panel" class="tab-panel">
+                    <div class="profile-card">
+                        <h3>Preferências</h3>
+                        <div class="theme-switcher">
+                            <div>
+                                <label style="font-weight: 600;">Tema da Interface</label>
+                                <p style="font-size: 0.9rem; color: var(--text-light);">Alterne entre os modos claro e escuro.</p>
+                            </div>
+                            <label class="theme-toggle">
+                                <input type="checkbox" id="theme-toggle-checkbox" style="display: none;">
+                                <div class="toggle-track"><div class="toggle-thumb"></div></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="seguranca-panel" class="tab-panel">
+                    <div class="profile-card">
+                        <h3>Alterar Senha</h3>
+                        <form id="password-change-form">
+                            <div class="form-group">
+                                <label for="new-password-input">Nova Senha</label>
+                                <input type="password" id="new-password-input" placeholder="Mínimo 6 caracteres" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password-input">Confirmar Nova Senha</label>
+                                <input type="password" id="confirm-password-input" placeholder="Repita a nova senha" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="change-password-btn">Salvar Nova Senha</button>
+                        </form>
+                        <div id="password-feedback-message"></div>
+                    </div>
+                </div>
+
+                <div id="excluir-panel" class="tab-panel">
+                    <div class="profile-card danger-zone">
+                        <h4>Zona de Perigo</h4>
+                        <p>A exclusão da sua conta é permanente e removerá todos os seus dados. Esta ação não pode ser desfeita.</p>
+                        <button id="delete-account-btn" class="btn btn-danger">Excluir Minha Conta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-col footer-about">
+                    <a href="index.html" class="logo"> <i data-lucide="leaf"></i> Vida Plena </a>
+                    <p style="margin-top: 15px;">Um projeto de TCC para uma vida mais saudável, combatendo o sedentarismo e a desinformação.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navegação</h4>
+                    <ul>
+                        <li><a href="index.html#pilares">O Projeto</a></li>
+                        <li><a href="index.html#desafios">Desafios</a></li>
+                        <li><a href="index.html#metodologia">Metodologia</a></li>
+                        <li><a href="index.html#artigos">Destaques</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="index.html#sobre">Sobre a Equipe</a></li>
+                        <li><a href="index.html#evento">Nosso Evento</a></li>
+                        <li><a href="comunidade.html">Comunidade</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Siga-nos</h4>
+                    <div class="footer-social">
+                        <a href="#"><i data-lucide="instagram"></i></a>
+                        <a href="#"><i data-lucide="facebook"></i></a>
+                        <a href="#"><i data-lucide="youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 Projeto Vida Plena. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" id="scrollTopBtn" title="Voltar ao topo">
+        <i data-lucide="arrow-up"></i>
+    </a>
+
+
+    <script type="module">
+        const { createClient } = supabase;
+        const SUPABASE_URL = 'https://iuyapkycjgmyvxlpycdd.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1eWFwa3ljamdteXZ4bHB5Y2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExMTYwODUsImV4cCI6MjA3NjY5MjA4NX0.VlLOoSnNvaWoMFtof6zaLUgWC60bCBJT_ckdI7GRFkM';
+        const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+        let currentChatPartnerId = null; 
+        let currentChatPartnerLastSeen = null;
+        let chatChannel = null; 
+        let currentReplyMessage = null; 
+        let allMessages = {}; 
+        let onlineUsers = new Set();
+        let presenceChannel = null;
+
+        function formatTimeAgo(dateString) {
+            if (!dateString) return 'há muito tempo';
+            const date = new Date(dateString);
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            let interval = seconds / 31536000;
+            if (interval > 1) return `há ${Math.floor(interval)} anos`;
+            interval = seconds / 2592000;
+            if (interval > 1) return `há ${Math.floor(interval)} meses`;
+            interval = seconds / 86400;
+            if (interval > 1) return `há ${Math.floor(interval)} dias`;
+            interval = seconds / 3600;
+            if (interval > 1) return `há ${Math.floor(interval)} horas`;
+            interval = seconds / 60;
+            if (interval > 1) return `há ${Math.floor(interval)} min`;
+            return "agora mesmo";
+        }
+
+        function updateChatHeaderStatus(forceStatus = null) {
+            const statusEl = document.getElementById('chat-header-status');
+            if (!statusEl || !currentChatPartnerId) return;
+
+            if (forceStatus === 'typing') {
+                statusEl.textContent = 'Digitando...';
+                statusEl.className = 'chat-header-status online';
+                return;
+            }
+            
+            if (onlineUsers.has(currentChatPartnerId)) {
+                statusEl.textContent = 'Online';
+                statusEl.className = 'chat-header-status online';
+            } else {
+                if (currentChatPartnerLastSeen) {
+                    statusEl.textContent = `Visto ${formatTimeAgo(currentChatPartnerLastSeen)}`;
+                } else {
+                    statusEl.textContent = 'Offline';
+                }
+                statusEl.className = 'chat-header-status';
+            }
+        }
+
+        async function updateNotificationBadge(userId) {
+             if (!userId) return;
+            const { count, error } = await sb.from('notifications').select('*', { count: 'exact', head: true }).eq('user_id', userId).eq('is_read', false);
+            if (error) { console.error("Erro ao buscar notificações:", error); return; }
+
+            const badge = document.getElementById('notification-badge');
+            if (badge && count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'block';
+            } else if (badge) {
+                badge.style.display = 'none';
+            }
+        }
+
+        async function setupNav(session) {
+             const mainNav = document.getElementById('main-nav');
+             const navLinks = document.getElementById('nav-links');
+             if (!mainNav || !navLinks) return;
+
+             mainNav.querySelectorAll('.dynamic-nav-item').forEach(item => item.remove());
+             navLinks.querySelectorAll('.dynamic-nav-item').forEach(item => item.remove());
+
+             if (session) {
+                 const { data: profile, error: profileError } = await sb.from('profiles')
+                     .select('avatar_url, full_name')
+                     .eq('id', session.user.id)
+                     .single();
+
+                  if (profileError && profileError.code !== 'PGRST116') {
+                       console.error('Erro ao buscar perfil do usuário:', profileError);
+                  }
+
+                 const profileName = profile?.full_name || 'Usuário';
+                 const avatarUrl = profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileName[0])}&background=285430&color=fff&bold=true`;
+
+                 const profileHtml = `
+                     <li class="dynamic-nav-item">
+                         <a href="perfil.html" class="nav-profile-link" style="display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--green-dark);">
+                             Meu Perfil
+                             <span id="notification-badge" class="notification-badge"></span>
+                             <img src="${avatarUrl}" alt="Foto de perfil" class="nav-avatar">
+                         </a>
+                     </li>
+                 `;
+                 navLinks.insertAdjacentHTML('beforeend', profileHtml);
+                 updateNotificationBadge(session.user.id); 
+
+                 const notificationChannel = sb.channel(`public:notifications:user_id=eq.${session.user.id}`)
+                     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' },
+                     (payload) => {
+                         updateNotificationBadge(session.user.id);
+                     })
+                     .subscribe((status) => {
+                          if (status === 'CHANNEL_ERROR') { console.error('Erro no canal de notificações RT:', notificationChannel.error()); }
+                     });
+
+             } else {
+                 mainNav.insertAdjacentHTML('beforeend', `<a href="login.html" class="btn-nav dynamic-nav-item">Login</a>`);
+                 navLinks.insertAdjacentHTML('beforeend', `<li class="dynamic-nav-item"><a href="login.html" class="btn-nav">Login</a></li>`);
+             }
+              lucide.createIcons();
+        }
+
+        async function initializePage() {
+            const { data: { session } } = await sb.auth.getSession();
+            if (!session) {
+                window.location.href = 'login.html';
+                return;
+            }
+            currentUser = session.user;
+            
+            setupNav(session);
+
+            // --- Seletores de Elementos ---
+            const profileForm = document.getElementById('profile-form');
+            const emailInput = document.getElementById('email');
+            const fullNameInput = document.getElementById('full_name');
+            const feedbackMessage = document.getElementById('feedback-message');
+            const avatarInput = document.getElementById('avatar-input');
+            const avatarPreview = document.getElementById('avatar-preview');
+            const displayName = document.getElementById('display-name');
+            const displayEmail = document.getElementById('display-email');
+            const themeToggle = document.getElementById('theme-toggle-checkbox');
+            const tabLinks = document.querySelectorAll('.nav-tab');
+            const tabPanels = document.querySelectorAll('.tab-panel');
+            const myArticlesList = document.getElementById('my-articles-list');
+            const logoutBtn = document.getElementById('logout-btn');
+            const notificationsList = document.getElementById('notifications-list');
+            const notificationsTabLink = document.getElementById('notifications-tab-link');
+
+            const userIdDisplay = document.getElementById('user-id-display');
+            const copyUserIdBtn = document.getElementById('copy-user-id-btn'); 
+            
+            const addFriendForm = document.getElementById('add-friend-form');
+            const friendIdInput = document.getElementById('friend-id-input'); 
+            const friendFeedbackMessage = document.getElementById('friend-feedback-message');
+            const pendingFriendsList = document.getElementById('pending-friends-list');
+            const acceptedFriendsList = document.getElementById('accepted-friends-list');
+            
+            const chatLayout = document.getElementById('chat-layout');
+            const chatBackBtn = document.getElementById('chat-back-btn');
+
+            const conversationList = document.getElementById('chat-conversation-list');
+            const chatWindowEmpty = document.getElementById('chat-window-empty');
+            const chatWindowActive = document.getElementById('chat-window-active');
+            const chatHeaderAvatar = document.getElementById('chat-header-avatar');
+            const chatHeaderName = document.getElementById('chat-header-name');
+            const chatMessageList = document.getElementById('chat-message-list');
+            const chatSendForm = document.getElementById('chat-send-form');
+            const chatMessageInput = document.getElementById('chat-message-input');
+            const replyPreviewBar = document.getElementById('reply-preview-bar');
+            const replyAuthorName = document.getElementById('reply-author-name');
+            const replyContent = document.getElementById('reply-content');
+            const cancelReplyBtn = document.getElementById('cancel-reply-btn');
+            
+            const passwordChangeForm = document.getElementById('password-change-form');
+            const newPasswordInput = document.getElementById('new-password-input');
+            const confirmPasswordInput = document.getElementById('confirm-password-input');
+            const passwordFeedbackMessage = document.getElementById('password-feedback-message');
+
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+            const menuToggle = document.getElementById('menu-toggle');
+            const navLinks = document.getElementById('nav-links');
+
+
+            chatMessageInput.addEventListener('input', () => {
+                if (chatChannel && chatChannel.state === 'joined') {
+                    chatChannel.send({
+                        type: 'broadcast',
+                        event: 'typing',
+                        payload: { user_id: currentUser.id }
+                    });
+                }
+            });
+
+            function showFeedback(message, type, duration = 4000) {
+                feedbackMessage.textContent = message;
+                feedbackMessage.className = type;
+                if(duration) {
+                    setTimeout(() => { feedbackMessage.className = ''; }, duration);
+                }
+            }
+
+            function showFriendFeedback(message, type, duration = 4000) {
+                friendFeedbackMessage.textContent = message;
+                friendFeedbackMessage.className = type;
+                if(duration) {
+                    setTimeout(() => { friendFeedbackMessage.className = ''; }, duration);
+                }
+            }
+            
+            function showPasswordFeedback(message, type, duration = 4000) {
+                passwordFeedbackMessage.textContent = message;
+                passwordFeedbackMessage.className = type;
+                if(duration) {
+                    setTimeout(() => { passwordFeedbackMessage.className = ''; }, duration);
+                }
+            }
+            
+            const navLinksAnchors = navLinks?.querySelectorAll('a'); 
+
+            const toggleMenu = () => {
+                if (!navLinks || !menuToggle) return;
+                navLinks.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                if (icon) {
+                    icon.setAttribute('data-lucide', navLinks.classList.contains('active') ? 'x' : 'menu');
+                    lucide.createIcons();
+                }
+            };
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', toggleMenu);
+            }
+
+            if (navLinksAnchors) {
+                navLinksAnchors.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        const href = link.getAttribute('href');
+                        const isExternalPage = href && href.includes('.html');
+                        const isAnchorLink = href && href.startsWith('#');
+
+                        if ((isAnchorLink || isExternalPage) && navLinks.classList.contains('active')) {
+                            toggleMenu();
+                        }
+                    });
+                });
+            }
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const panelId = link.getAttribute('href').substring(1) + '-panel';
+                    
+                    tabLinks.forEach(l => l.classList.remove('active'));
+                    tabPanels.forEach(p => p.classList.remove('active'));
+                    
+                    link.classList.add('active');
+                    const panel = document.getElementById(panelId);
+                    if (panel) {
+                        panel.classList.add('active');
+                    }
+
+                    if (chatLayout) chatLayout.classList.remove('chat-active');
+
+                    if(panelId === 'notificacoes-panel') {
+                        loadNotifications();
+                    }
+                    if(panelId === 'amigos-panel') {
+                        loadFriends(); 
+                    }
+                    if(panelId === 'mensagens-panel') {
+                        loadConversations();
+                        if (chatChannel) chatChannel.unsubscribe();
+                        currentChatPartnerId = null;
+                        chatWindowActive.style.display = 'none';
+                        chatWindowEmpty.style.display = 'flex';
+                    }
+                });
+            });
+            
+            logoutBtn.addEventListener('click', async () => {
+                await sb.removeAllChannels();
+                await sb.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', currentUser.id);
+                await sb.auth.signOut();
+                window.location.href = 'index.html';
+            });
+            
+            async function loadProfile() {
+                emailInput.value = currentUser.email;
+                displayEmail.textContent = currentUser.email;
+                userIdDisplay.value = currentUser.id; 
+                
+                const { data, error } = await sb.from('profiles')
+                    .select('full_name, avatar_url') 
+                    .eq('id', currentUser.id)
+                    .single();
+                    
+                if (data) {
+                    fullNameInput.value = data.full_name || '';
+                    displayName.textContent = data.full_name || 'Usuário';
+                    if (data.avatar_url) { 
+                        avatarPreview.src = data.avatar_url;
+                    }
+                } else if (error) {
+                    console.error("Erro ao carregar perfil:", error.message);
+                }
+            }
+
+            async function loadMyArticles() {
+                const { data, error } = await sb.from('community-articles').select('*').eq('author_id', currentUser.id).order('created_at', { ascending: false });
+                if (error || data.length === 0) {
+                    myArticlesList.innerHTML = '<p>Você ainda não publicou nenhum artigo.</p>';
+                    return;
+                }
+                myArticlesList.innerHTML = data.map(article => `
+                    <div style="border-bottom: 1px solid var(--border-color); padding: 10px 0;">
+                        <a href="comunidade.html?article=${article.id}" style="font-weight: bold; text-decoration: none; color: var(--green-dark);">${article.title}</a>
+                        <p style="font-size: 0.9rem; color: var(--text-light);">Publicado em: ${new Date(article.created_at).toLocaleDateString()}</p>
+                    </div>
+                `).join('');
+            }
+            
+            copyUserIdBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(userIdDisplay.value).then(() => {
+                    copyUserIdBtn.innerHTML = '<i data-lucide="check" style="width:16px; height: 16px; margin-right: 5px; vertical-align: middle;"></i>Copiado!';
+                    lucide.createIcons();
+                    setTimeout(() => {
+                        copyUserIdBtn.innerHTML = '<i data-lucide="copy" style="width:16px; height: 16px; margin-right: 5px; vertical-align: middle;"></i>Copiar';
+                        lucide.createIcons();
+                    }, 2000);
+                }).catch(err => {
+                    alert('Erro ao copiar ID: ' + err);
+                });
+            });
+
+            addFriendForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const friendId = friendIdInput.value.trim(); 
+                
+                if (friendId === currentUser.id) { 
+                    showFriendFeedback('Você não pode adicionar a si mesmo.', 'error');
+                    return;
+                }
+
+                showFriendFeedback('Procurando usuário...', 'success');
+                const { data: friendProfile, error: profileError } = await sb
+                    .from('profiles')
+                    .select('id')
+                    .eq('id', friendId) 
+                    .single();
+
+                if (profileError || !friendProfile) {
+                    showFriendFeedback('Usuário não encontrado com este ID.', 'error');
+                    return;
+                }
+                const { error: friendshipError } = await sb.from('friendships').insert({
+                    user_1_id: currentUser.id,
+                    user_2_id: friendId,
+                    status: 'pending'
+                });
+
+                if (friendshipError) {
+                    if (friendshipError.code === '23505') { 
+                        showFriendFeedback('Você já enviou um pedido para este usuário.', 'error');
+                    } else {
+                        showFriendFeedback('Erro ao enviar pedido: ' + friendshipError.message, 'error');
+                    }
+                } else {
+                    showFriendFeedback('Pedido de amizade enviado!', 'success');
+                    friendIdInput.value = ''; 
+                    loadFriends(); 
+                }
+            });
+
+            async function loadFriends() {
+                pendingFriendsList.innerHTML = '<p>Carregando...</p>';
+                acceptedFriendsList.innerHTML = '<p>Carregando...</p>';
+
+                const { data: friendships, error: friendshipsError } = await sb
+                    .from('friendships')
+                    .select('id, status, user_1_id, user_2_id')
+                    .or(`user_1_id.eq.${currentUser.id},user_2_id.eq.${currentUser.id}`);
+                
+                if (friendshipsError) {
+                    console.error("Erro 1/2 (friendships):", friendshipsError);
+                    const errorMsg = '<p style="color:var(--danger-color);">Erro ao carregar amizades.</p>';
+                    pendingFriendsList.innerHTML = errorMsg;
+                    acceptedFriendsList.innerHTML = errorMsg;
+                    return;
+                }
+
+                const pendingRequests = [];
+                const acceptedFriendships = [];
+                const friendIds = new Set(); 
+
+                friendships.forEach(f => {
+                    if (f.status === 'pending' && f.user_2_id === currentUser.id) {
+                        pendingRequests.push(f);
+                        friendIds.add(f.user_1_id); 
+                    } else if (f.status === 'accepted') {
+                        acceptedFriendships.push(f);
+                        if (f.user_1_id === currentUser.id) {
+                            friendIds.add(f.user_2_id);
+                        } else {
+                            friendIds.add(f.user_1_id);
+                        }
+                    }
+                });
+
+                if (friendIds.size === 0) {
+                    pendingFriendsList.innerHTML = '<p>Nenhum pedido de amizade pendente.</p>';
+                    acceptedFriendsList.innerHTML = '<p>Você ainda não adicionou nenhum amigo.</p>';
+                    return;
+                }
+
+                const { data: profiles, error: profilesError } = await sb
+                    .from('profiles')
+                    .select('id, full_name, avatar_url, email, last_seen') 
+                    .in('id', Array.from(friendIds));
+
+                if (profilesError) {
+                    console.error("Erro 2/2 (profiles):", profilesError);
+                    const errorMsg = '<p style="color:var(--danger-color);">Erro ao carregar perfis.</p>';
+                    pendingFriendsList.innerHTML = errorMsg;
+                    acceptedFriendsList.innerHTML = errorMsg;
+                    return;
+                }
+
+                const profileMap = new Map();
+                profiles.forEach(p => profileMap.set(p.id, p));
+
+                if (pendingRequests.length === 0) {
+                    pendingFriendsList.innerHTML = '<p>Nenhum pedido de amizade pendente.</p>';
+                } else {
+                    pendingFriendsList.innerHTML = pendingRequests.map(req => {
+                        const friend = profileMap.get(req.user_1_id);
+                        if (!friend) return ''; 
+                        const avatar = friend.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(friend.full_name || 'U')}`;
+                        return `
+                        <div class="friend-item" data-friendship-id="${req.id}">
+                            <img src="${avatar}" alt="Avatar" class="friend-item-avatar">
+                            <div class="friend-item-info">
+                                <strong>${friend.full_name || 'Usuário'}</strong>
+                                <p>${friend.email}</p>
+                            </div>
+                            <div class="friend-item-actions">
+                                <button class="btn btn-accept" data-id="${req.id}">Aceitar</button>
+                            </div>
+                        </div>
+                        `;
+                    }).join('');
+                }
+
+                if (acceptedFriendships.length === 0) {
+                    acceptedFriendsList.innerHTML = '<p>Você ainda não adicionou nenhum amigo.</p>';
+                } else {
+                    acceptedFriendsList.innerHTML = acceptedFriendships.map(req => {
+                        const friendId = (req.user_1_id === currentUser.id) ? req.user_2_id : req.user_1_id;
+                        const friend = profileMap.get(friendId);
+                        if (!friend) return ''; 
+                        const avatar = friend.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(friend.full_name || 'U')}`;
+                        
+                        return `
+                        <div class="friend-item" data-user-id="${friend.id}" data-last-seen="${friend.last_seen || ''}" data-user-name="${friend.full_name || 'Usuário'}" data-user-avatar="${avatar}">
+                            <img src="${avatar}" alt="Avatar" class="friend-item-avatar">
+                            <div class="friend-item-info">
+                                <strong>${friend.full_name || 'Usuário'}</strong>
+                                <p class="friend-status" data-user-id="${friend.id}">
+                                    <i class="status-icon offline"></i> Carregando...
+                                </p>
+                            </div>
+                            <div class="friend-item-actions">
+                                <button class="btn btn-start-chat" title="Iniciar Conversa">
+                                    <i data-lucide="message-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                        `;
+                    }).join('');
+                }
+                
+                lucide.createIcons();
+                renderFriendStatus();
+            }
+            
+            pendingFriendsList.addEventListener('click', async (e) => {
+                if (e.target.classList.contains('btn-accept')) {
+                    const friendshipId = e.target.dataset.id;
+                    e.target.disabled = true;
+                    e.target.textContent = 'Aceitando...';
+                    
+                    const { error } = await sb
+                        .from('friendships')
+                        .update({ status: 'accepted' })
+                        .eq('id', friendshipId)
+                        .eq('user_2_id', currentUser.id); 
+                    
+                    if (error) {
+                        alert('Erro ao aceitar pedido: ' + error.message);
+                    } else {
+                        loadFriends(); 
+                    }
+                }
+            });
+
+            acceptedFriendsList.addEventListener('click', (e) => {
+                const chatBtn = e.target.closest('.btn-start-chat');
+                if (!chatBtn) return;
+                
+                const friendItem = chatBtn.closest('.friend-item');
+                const friendId = friendItem.dataset.userId;
+                const friendName = friendItem.dataset.userName;
+                const friendAvatar = friendItem.dataset.userAvatar;
+                const friendLastSeen = friendItem.dataset.lastSeen;
+
+                tabLinks.forEach(link => link.classList.remove('active'));
+                tabPanels.forEach(panel => panel.classList.remove('active'));
+                
+                document.querySelector('a[href="#mensagens"]').classList.add('active');
+                document.getElementById('mensagens-panel').classList.add('active');
+                
+                openChatWindow(friendId, friendName, friendAvatar, friendLastSeen);
+            });
+
+            function renderFriendStatus() {
+                const friendItems = document.querySelectorAll('#accepted-friends-list .friend-item');
+                friendItems.forEach(item => {
+                    const statusEl = item.querySelector('.friend-status');
+                    if (!statusEl) return;
+                    
+                    const userId = item.dataset.userId;
+                    if (onlineUsers.has(userId)) {
+                        statusEl.innerHTML = '<i class="status-icon online"></i> Online';
+                        statusEl.className = 'friend-status online';
+                    } else {
+                        const lastSeen = item.dataset.lastSeen;
+                        statusEl.innerHTML = `<i class="status-icon offline"></i> ${formatTimeAgo(lastSeen)}`;
+                        statusEl.className = 'friend-status offline';
+                    }
+                    lucide.createIcons();
+                });
+            }
+
+            async function setupPresence() {
+                presenceChannel = sb.channel('user-presence');
+                presenceChannel
+                    .on('presence', { event: 'sync' }, () => {
+                        const newState = presenceChannel.presenceState();
+                        onlineUsers.clear();
+                        for (const id in newState) {
+                            newState[id].forEach(presence => {
+                                onlineUsers.add(presence.user_id);
+                            });
+                        }
+                        renderFriendStatus();
+                        updateChatHeaderStatus();
+                    })
+                    .on('presence', { event: 'join' }, ({ key, newPresences }) => {
+                        let partnerJoined = false;
+                        newPresences.forEach(p => {
+                            onlineUsers.add(p.user_id);
+                            if (p.user_id === currentChatPartnerId) partnerJoined = true;
+                        });
+                        renderFriendStatus();
+                        if (partnerJoined) updateChatHeaderStatus();
+                    })
+                    .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+                        let partnerLeft = false;
+                        leftPresences.forEach(p => {
+                            onlineUsers.delete(p.user_id);
+                            if (p.user_id === currentChatPartnerId) partnerLeft = true;
+                        });
+                        renderFriendStatus(); 
+                        if (partnerLeft) {
+                            currentChatPartnerLastSeen = new Date().toISOString(); 
+                            updateChatHeaderStatus();
+                        }
+                    })
+                    .subscribe(async (status) => {
+                        if (status === 'SUBSCRIBED') {
+                            await presenceChannel.track({ 
+                                user_id: currentUser.id, 
+                                online_at: new Date().toISOString() 
+                            });
+                        }
+                    });
+            }
+
+
+            async function loadConversations() {
+                conversationList.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--text-light);">Carregando...</p>';
+                
+                const { data, error } = await sb.rpc('get_conversations_with_status');
+
+                if (error) {
+                    console.error("Erro ao buscar conversas:", error);
+                    conversationList.innerHTML = '<p style="padding: 20px; color: var(--danger-color);">Erro ao carregar conversas. (Verifique o RPC get_conversations_with_status)</p>';
+                    return;
+                }
+
+                if (data.length === 0) {
+                    conversationList.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--text-light);">Nenhuma conversa iniciada.</p>';
+                    return;
+                }
+
+                conversationList.innerHTML = data.map(convo => {
+                    const avatar = convo.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(convo.full_name || 'U')}`;
+                    const displayName = convo.full_name || 'Usuário'; 
+                    
+                    return `
+                    <div class="chat-conversation-item" 
+                         data-user-id="${convo.user_id}" 
+                         data-user-name="${displayName}" 
+                         data-user-avatar="${avatar}"
+                         data-user-last-seen="${convo.last_seen || ''}">
+                        <img src="${avatar}" alt="Avatar" class="chat-conversation-avatar">
+                        <div class="chat-conversation-info">
+                            <strong>${displayName}</strong>
+                            <p>${convo.last_message || '...'}</p>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            }
+
+            async function openChatWindow(otherUserId, otherUserName, otherUserAvatar, otherUserLastSeen) {
+                if (chatChannel) await chatChannel.unsubscribe();
+
+                document.querySelectorAll('.chat-conversation-item.active').forEach(i => i.classList.remove('active'));
+                const existingConvoItem = document.querySelector(`.chat-conversation-item[data-user-id="${otherUserId}"]`);
+                if(existingConvoItem) {
+                    existingConvoItem.classList.add('active');
+                }
+
+                currentChatPartnerId = otherUserId; 
+                currentChatPartnerLastSeen = otherUserLastSeen;
+                allMessages = {}; 
+
+                chatHeaderAvatar.src = otherUserAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(otherUserName || 'U')}`;
+                chatHeaderName.textContent = otherUserName; 
+                updateChatHeaderStatus(); 
+
+                chatWindowEmpty.style.display = 'none';
+                chatWindowActive.style.display = 'flex';
+                
+                if (chatLayout) chatLayout.classList.add('chat-active');
+
+                chatMessageList.innerHTML = '<p style="text-align: center; color: var(--text-light);">Carregando mensagens...</p>';
+                
+                const { data, error } = await sb.from('messages')
+                    .select('*')
+                    .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${currentUser.id})`)
+                    .order('created_at', { ascending: true });
+
+                if (error) {
+                    console.error("Erro ao carregar chat:", error); 
+                    chatMessageList.innerHTML = `<p style="color: var(--danger-color);">Erro ao carregar chat.</p>`;
+                    return;
+                }
+
+                chatMessageList.innerHTML = '';
+                data.forEach(msg => {
+                    allMessages[msg.id] = msg; 
+                    renderMessage(msg);
+                });
+                scrollToBottom(true); 
+
+                const channelName = [currentUser.id, otherUserId].sort().join('-');
+                
+                let typingTimeout = null;
+
+                chatChannel = sb.channel(`chat:${channelName}`, {
+                    config: {
+                        broadcast: {
+                            self: false,
+                        },
+                    },
+                });
+
+                // [CORREÇÃO GERAL DE REALTIME]
+                // Um listener único e eficiente para todos os eventos
+                chatChannel
+                    .on('postgres_changes', 
+                        { 
+                            event: '*', // Ouve INSERT, UPDATE, e DELETE
+                            schema: 'public', 
+                            table: 'messages',
+                            // Filtra apenas mensagens DESTA conversa
+                            filter: `(sender_id=eq.${currentUser.id} AND receiver_id=eq.${otherUserId}) OR (sender_id=eq.${otherUserId} AND receiver_id=eq.${currentUser.id})`
+                        }, 
+                        (payload) => {
+                            
+                            if (payload.eventType === 'INSERT') {
+                                const newMsg = payload.new;
+                                if (!allMessages[newMsg.id]) { // Previne duplicatas
+                                    allMessages[newMsg.id] = newMsg;
+                                    renderMessage(newMsg);
+                                    scrollToBottom();
+                                }
+                            } 
+                            
+                            else if (payload.eventType === 'UPDATE') {
+                                const updatedMsg = payload.new;
+                                if (allMessages[updatedMsg.id]) {
+                                    const msgElement = document.getElementById(`msg-${updatedMsg.id}`);
+                                    allMessages[updatedMsg.id] = updatedMsg; 
+                                    if (msgElement) {
+                                        msgElement.outerHTML = createMessageHTML(updatedMsg);
+                                        lucide.createIcons();
+                                    }
+                                }
+                            } 
+                            
+                            else if (payload.eventType === 'DELETE') {
+                                const deletedMsgId = payload.old.id;
+                                if (allMessages[deletedMsgId]) {
+                                    const msgElement = document.getElementById(`msg-${deletedMsgId}`);
+                                    if (msgElement) msgElement.remove(); 
+                                    delete allMessages[deletedMsgId]; 
+                                }
+                            }
+                        }
+                    )
+                    .on('broadcast', { event: 'typing' }, ({ payload }) => {
+                        if (payload.user_id === currentChatPartnerId) {
+                            updateChatHeaderStatus('typing');
+                            
+                            if (typingTimeout) clearTimeout(typingTimeout);
+                            typingTimeout = setTimeout(() => {
+                                updateChatHeaderStatus(); 
+                            }, 3000);
+                        }
+                    })
+                    .subscribe((status) => {
+                         if (status === 'SUBSCRIBED') {
+                             console.log('Canal de chat real-time conectado.');
+                         }
+                         if (status === 'CHANNEL_ERROR') {
+                             console.error('Erro no canal de chat. Verifique as RLS e a Replicação do Supabase.');
+                             // Se o canal falhar, o chat não será real-time
+                         }
+                    });
+            }
+
+            conversationList.addEventListener('click', async (e) => {
+                const item = e.target.closest('.chat-conversation-item');
+                if (!item) return;
+                
+                openChatWindow(
+                    item.dataset.userId,
+                    item.dataset.userName,
+                    item.dataset.userAvatar,
+                    item.dataset.userLastSeen
+                );
+            });
+
+            if (chatBackBtn) {
+                chatBackBtn.addEventListener('click', () => {
+                    if (chatLayout) chatLayout.classList.remove('chat-active');
+                });
+            }
+
+            function createMessageHTML(msg) {
+                const isSent = msg.sender_id === currentUser.id;
+                const authorName = isSent ? 'Você' : (chatHeaderName.textContent || 'Usuário');
+
+                let quoteHtml = '';
+                if (msg.parent_message_id && msg.parent_message_content) {
+                    quoteHtml = `
+                    <div class="message-quote">
+                        <p class="message-quote-author">@${msg.parent_message_author_name || 'Usuário'}</p>
+                        <p class="message-quote-content">${msg.parent_message_content}</p>
+                    </div>`;
+                }
+                
+                const editedTag = msg.is_edited ? '<span class="message-edited-tag">(editado)</span>' : '';
+
+                const replyBtn = `<button class="btn-reply" title="Responder"><i data-lucide="corner-up-left"></i></button>`;
+                const editBtn = isSent ? `<button class="btn-edit" title="Editar"><i data-lucide="pencil"></i></button>` : '';
+                const deleteBtn = isSent ? `<button class="btn-delete" title="Excluir"><i data-lucide="trash-2"></i></button>` : '';
+
+                return `
+                <div class="message-item ${isSent ? 'sent' : 'received'}" id="msg-${msg.id}" data-msg-id="${msg.id}">
+                    <div class="message-wrapper">
+                        <div class="message-actions">
+                            ${replyBtn}
+                            ${editBtn}
+                            ${deleteBtn}
+                        </div>
+                        <div class="message-bubble">
+                            ${quoteHtml}
+                            <div class="message-content">${msg.content}</div>
+                        </div>
+                    </div>
+                    ${editedTag}
+                </div>`;
+            }
+            
+            function renderMessage(msg) {
+                const msgHtml = createMessageHTML(msg);
+                chatMessageList.insertAdjacentHTML('beforeend', msgHtml);
+                lucide.createIcons();
+            }
+
+            function scrollToBottom(instant = false) {
+                chatMessageList.scrollTo({
+                    top: chatMessageList.scrollHeight,
+                    behavior: instant ? 'auto' : 'smooth'
+                });
+            }
+
+            // [CORREÇÃO] Envio de Mensagem
+            chatSendForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const content = chatMessageInput.value.trim();
+                
+                if (!content || !currentChatPartnerId) return; 
+                
+                let messageData = {
+                    sender_id: currentUser.id,
+                    receiver_id: currentChatPartnerId,
+                    content: content
+                };
+
+                if (currentReplyMessage) {
+                    messageData.parent_message_id = currentReplyMessage.id;
+                    messageData.parent_message_content = currentReplyMessage.content;
+                    messageData.parent_message_author_name = (currentReplyMessage.sender_id === currentUser.id) ? 'Você' : (chatHeaderName.textContent || 'Usuário');
+                }
+                
+                // Salva o valor e limpa o input
+                const tempContent = chatMessageInput.value;
+                chatMessageInput.value = ''; 
+                hideReplyPreview(); 
+
+                const { data: insertedMsg, error } = await sb.from('messages').insert({
+                    sender_id: messageData.sender_id,
+                    receiver_id: messageData.receiver_id,
+                    content: messageData.content,
+                    parent_message_id: messageData.parent_message_id,
+                    parent_message_content: messageData.parent_message_content,
+                    parent_message_author_name: messageData.parent_message_author_name
+                }).select().single(); 
+
+                if (error) {
+                    console.error("Erro ao enviar mensagem:", error);
+                    chatMessageInput.value = tempContent; // Restaura a mensagem
+                    alert("Não foi possível enviar a mensagem.");
+                } else {
+                    // [ADICIONADO] Renderiza a mensagem localmente
+                    // Isso corrige o bug da mensagem não aparecer
+                    if (!allMessages[insertedMsg.id]) {
+                        allMessages[insertedMsg.id] = insertedMsg;
+                        renderMessage(insertedMsg);
+                        scrollToBottom();
+                    }
+                }
+            });
+
+            // [CORREÇÃO] Deletar Mensagem
+            chatMessageList.addEventListener('click', async (e) => {
+                const msgElement = e.target.closest('.message-item');
+                if (!msgElement) return;
+                const msgId = msgElement.dataset.msgId;
+                const msg = allMessages[msgId];
+                if (!msg) return;
+
+                if (e.target.closest('.btn-delete')) {
+                    if (confirm('Tem certeza que deseja excluir esta mensagem?')) {
+                        const { error } = await sb.from('messages').delete().eq('id', msgId).eq('sender_id', currentUser.id);
+                        if (error) {
+                            alert("Erro ao excluir: " + error.message);
+                        } else {
+                            // [ADICIONADO] Remove a mensagem localmente
+                            // Isso corrige o bug da mensagem não sumir
+                            msgElement.remove();
+                            delete allMessages[msgId];
+                        }
+                    }
+                }
+
+                else if (e.target.closest('.btn-reply')) {
+                    const authorName = (msg.sender_id === currentUser.id) ? 'Você' : (chatHeaderName.textContent || 'Usuário');
+                    showReplyPreview(msg, authorName);
+                }
+
+                else if (e.target.closest('.btn-edit')) {
+                    showEditForm(msgElement, msg);
+                }
+            });
+
+            chatMessageList.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!e.target.classList.contains('edit-form')) return;
+
+                const form = e.target;
+                const msgElement = form.closest('.message-item');
+                const msgId = msgElement.dataset.msgId;
+                const newContent = form.querySelector('.edit-input').value.trim();
+
+                if (!newContent) return; 
+
+                const { data, error } = await sb.from('messages')
+                    .update({ content: newContent, is_edited: true })
+                    .eq('id', msgId)
+                    .select()
+                    .single();
+
+                if (error) {
+                    alert('Erro ao salvar edição: ' + error.message);
+                }
+                // Não precisa de update local, o listener de UPDATE vai pegar
+            });
+            
+            function showReplyPreview(msg, authorName) {
+                currentReplyMessage = msg;
+                replyAuthorName.textContent = authorName;
+                replyContent.textContent = msg.content;
+                replyPreviewBar.style.display = 'flex';
+                chatMessageInput.focus();
+            }
+
+            function hideReplyPreview() {
+                currentReplyMessage = null;
+                replyPreviewBar.style.display = 'none';
+            }
+            
+            cancelReplyBtn.addEventListener('click', hideReplyPreview);
+
+            function showEditForm(msgElement, msg) {
+                const bubble = msgElement.querySelector('.message-bubble');
+                if (!bubble) return;
+                
+                bubble.style.display = 'none'; 
+                
+                const editForm = document.createElement('form');
+                editForm.className = 'edit-form';
+                editForm.innerHTML = `
+                    <input type="text" class="edit-input" value="${msg.content}">
+                    <button type="submit" class="btn btn-primary" style="padding: 8px 12px; font-size: 0.8rem;">Salvar</button>
+                    <button type="button" class="btn btn-secondary btn-cancel-edit" style="padding: 8px 12px; font-size: 0.8rem;">Cancelar</button>
+                `;
+                
+                msgElement.querySelector('.message-wrapper').appendChild(editForm);
+                editForm.querySelector('.edit-input').focus();
+                
+                editForm.querySelector('.btn-cancel-edit').addEventListener('click', () => {
+                    editForm.remove();
+                    bubble.style.display = 'block';
+                });
+            }
+
+
+            const globalMessagesChannel = sb.channel('public:messages')
+                .on('postgres_changes', 
+                    { 
+                        event: 'INSERT', 
+                        schema: 'public', 
+                        table: 'messages',
+                        filter: `receiver_id=eq.${currentUser.id}`
+                    }, 
+                    (payload) => {
+                        if (document.getElementById('mensagens-panel').classList.contains('active') === false || 
+                            payload.new.sender_id !== currentChatPartnerId) {
+                            loadConversations();
+                        }
+                    }
+                )
+                .subscribe();
+
+
+            async function loadNotifications() {
+                const { data, error } = await sb.from('notifications').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+
+                if (error) {
+                    notificationsList.innerHTML = '<p>Erro ao carregar notificações.</p>';
+                    return;
+                }
+                
+                if (data.length === 0) {
+                    notificationsList.innerHTML = '<p>Nenhuma notificação ainda.</p>';
+                } else {
+                    notificationsList.innerHTML = data.map(n => `
+                        <a href="comunidade.html?article=${n.article_id}#comment-${n.comment_id}" class="notification-item ${!n.is_read ? 'unread' : ''}">
+                            <i data-lucide="message-circle"></i>
+                            <p>${n.message}</p>
+                            <time>${new Date(n.created_at).toLocaleDateString()}</time>
+                        </a>
+                    `).join('');
+                    lucide.createIcons();
+                }
+                
+                markNotificationsAsRead();
+            }
+            
+            function updateNotificationBadgeUI(notifications) {
+                 const unreadCount = notifications.filter(n => !n.is_read).length;
+                 // Atualiza os dois badges
+                const badgeSidebar = document.getElementById('notification-count-sidebar');
+                const badgeHeader = document.getElementById('notification-badge');
+                
+                const update = (badge) => {
+                    if (badge && unreadCount > 0) {
+                        badge.textContent = unreadCount;
+                        badge.style.display = 'block';
+                    } else if (badge) {
+                        badge.style.display = 'none';
+                    }
+                };
+                
+                update(badgeSidebar);
+                update(badgeHeader);
+            }
+
+            async function markNotificationsAsRead() {
+                const { error } = await sb.from('notifications').update({ is_read: true }).eq('user_id', currentUser.id).eq('is_read', false);
+                if (!error) {
+                    document.querySelectorAll('.notification-item.unread').forEach(item => item.classList.remove('unread'));
+                    // Limpa os dois badges
+                    const badgeSidebar = document.getElementById('notification-count-sidebar');
+                    const badgeHeader = document.getElementById('notification-badge');
+                    if(badgeSidebar) badgeSidebar.style.display = 'none';
+                    if(badgeHeader) badgeHeader.style.display = 'none';
+                }
+            }
+            
+            profileForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const updatedProfile = {
+                    full_name: fullNameInput.value.trim(),
+                };
+                
+                const { error } = await sb.from('profiles').update(updatedProfile).eq('id', currentUser.id);
+                if (error) {
+                    showFeedback('Erro ao atualizar perfil: ' + error.message, 'error');
+                } else {
+                    showFeedback('Perfil atualizado com sucesso!', 'success');
+                    displayName.textContent = updatedProfile.full_name || 'Usuário';
+                }
+            });
+            
+            avatarInput.addEventListener('change', async (e) => {
+                 const file = e.target.files[0];
+                if (!file) return;
+
+                const fileName = `${currentUser.id}/avatar-${Date.now()}.${file.name.split('.').pop()}`;
+                
+                const { error: uploadError } = await sb.storage.from('avatars').upload(fileName, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                });
+                
+                if (uploadError) {
+                    showFeedback('Erro no upload: ' + uploadError.message, 'error');
+                    return;
+                }
+                
+                const { data: urlData } = sb.storage.from('avatars').getPublicUrl(fileName);
+                const publicUrl = urlData.publicUrl;
+
+                const { error: updateError } = await sb.from('profiles').update({ avatar_url: publicUrl }).eq('id', currentUser.id);
+
+                if (updateError) {
+                    showFeedback('Erro ao salvar URL: ' + updateError.message, 'error');
+                } else {
+                    avatarPreview.src = publicUrl;
+                    showFeedback('Avatar atualizado!', 'success');
+                    const navAvatar = document.querySelector('.nav-avatar');
+                    if(navAvatar) navAvatar.src = publicUrl;
+                }
+            });
+            
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {
+                themeToggle.checked = true;
+            }
+            themeToggle.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+            
+            passwordChangeForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const newPassword = newPasswordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                if (newPassword !== confirmPassword) {
+                    showPasswordFeedback('As senhas não conferem. Tente novamente.', 'error');
+                    return;
+                }
+                
+                if (newPassword.length < 6) {
+                    showPasswordFeedback('A senha deve ter no mínimo 6 caracteres.', 'error');
+                    return;
+                }
+
+                document.getElementById('change-password-btn').disabled = true;
+                document.getElementById('change-password-btn').textContent = 'Salvando...';
+
+                const { error } = await sb.auth.updateUser({ password: newPassword });
+
+                if (error) {
+                    showPasswordFeedback('Erro ao alterar a senha: ' + error.message, 'error');
+                } else {
+                    showPasswordFeedback('Senha alterada com sucesso!', 'success');
+                    passwordChangeForm.reset(); 
+                }
+
+                document.getElementById('change-password-btn').disabled = false;
+                document.getElementById('change-password-btn').textContent = 'Salvar Nova Senha';
+            });
+            
+            document.getElementById('delete-account-btn').addEventListener('click', async () => {
+                const confirmation = prompt('Esta ação é irreversível. Para confirmar, digite "EXCLUIR" em maiúsculas:');
+                if (confirmation === 'EXCLUIR') {
+                    const { error } = await sb.rpc('delete_user');
+                    if (error) {
+                        alert('Erro ao excluir conta. ' + error.message);
+                    } else {
+                        alert('Conta excluída com sucesso. Você será deslogado.');
+                        await sb.auth.signOut();
+                        window.location.href = 'index.html';
+                    }
+                } else {
+                    alert('Exclusão cancelada.');
+                }
+            });
+
+            window.addEventListener('scroll', () => {
+                if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                    if(scrollTopBtn) scrollTopBtn.style.display = 'block';
+                } else {
+                    if(scrollTopBtn) scrollTopBtn.style.display = 'none';
+                }
+            });
+            if(scrollTopBtn) {
+                scrollTopBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // --- CARREGAMENTO INICIAL ---
+            await loadProfile();
+            await loadMyArticles();
+            await loadNotifications(); 
+            await setupPresence(); 
+            lucide.createIcons();
+        }
+
+        initializePage();
+    </script>
+    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="perfil.css">
+</body>
+</html>

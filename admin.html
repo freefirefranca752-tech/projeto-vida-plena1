@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Vida Plena</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --green-dark: #285430;
+            --green-light: #5F8D4E;
+            --accent-color: #E5B80B;
+            --text-color: #333333;
+            --text-light: #555555;
+            --bg-color: #FFFFFF;
+            --bg-soft: #FBF8F1;
+            --white: #FFFFFF;
+            --border-color: #eee;
+            --danger-color: #a72626;
+            --warning-color: #E5B80B;
+            --font-title: 'Poppins', sans-serif;
+            --font-body: 'Lato', sans-serif;
+            --shadow: 0 4px 20px rgba(0,0,0,0.07);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-soft);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: 260px;
+            background-color: var(--bg-color);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+        }
+        .admin-logo {
+            font-family: var(--font-title);
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--green-dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 30px;
+            padding: 10px 0;
+        }
+        .admin-nav {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+        }
+        .admin-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-light);
+            font-weight: 600;
+            transition: background-color 0.3s, color 0.3s;
+            cursor: pointer;
+            position: relative; /* Para o badge */
+        }
+        .admin-nav a:hover {
+            background: var(--bg-soft);
+            color: var(--text-color);
+        }
+        .admin-nav a.active {
+            background: var(--green-light);
+            color: white;
+        }
+        .admin-nav a#logout-btn {
+            margin-top: auto;
+            color: var(--danger-color);
+        }
+        .admin-nav a#logout-btn:hover {
+            background-color: #f8d7da;
+            color: var(--danger-color);
+        }
+        
+        /* [NOVO] Badge para denúncias */
+        .admin-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            border-radius: 50%;
+            padding: 2px 7px;
+            display: none;
+        }
+        .admin-badge.visible {
+            display: block;
+        }
+        /* Fim [NOVO] */
+
+        .admin-main {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            margin-left: 260px;
+        }
+        .admin-panel {
+            display: none;
+        }
+        .admin-panel.active {
+            display: block;
+        }
+        .admin-header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .admin-header h1 {
+            font-family: var(--font-title);
+            font-size: 2.5rem;
+            color: var(--green-dark);
+        }
+        
+        .admin-search-bar {
+            position: relative;
+            min-width: 300px;
+        }
+        .admin-search-bar input {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        /* *
+         * ESSA FOI A CORREÇÃO:
+         * Mudei de ".admin-search-bar i" para ".admin-search-bar i, .admin-search-bar svg"
+         *
+        */
+        .admin-search-bar i,
+        .admin-search-bar svg {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            pointer-events: none; /* Adicionado para o ícone não bloquear o clique no input */
+        }
+        
+        .admin-card {
+            background: var(--bg-color);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            overflow-x: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+            white-space: nowrap;
+        }
+        .data-table th {
+            font-family: var(--font-title);
+            font-weight: 600;
+            color: var(--text-light);
+        }
+        .data-table td .email {
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+        .data-table .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: all 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+        .btn-primary { background-color: var(--green-dark); color: var(--white); }
+        .btn-primary:hover { background-color: var(--green-light); }
+        .btn-secondary { background: #eee; color: var(--text-color); }
+        .btn-secondary:hover { background: #ddd; }
+        
+        .btn-icon {
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            line-height: 1;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-icon i { width: 16px; height: 16px; vertical-align: middle; }
+        .btn-edit { background-color: var(--bg-soft); color: var(--text-light); }
+        .btn-edit:hover { background-color: #eee; }
+        .btn-delete { background-color: #fef0f0; color: var(--danger-color); }
+        .btn-delete:hover { background-color: var(--danger-color); color: var(--white); }
+        
+        /* [NOVO] Botão de Resolver Denúncia */
+        .btn-resolve { background-color: #f0f9fe; color: var(--warning-color); }
+        .btn-resolve:hover { background-color: var(--warning-color); color: var(--white); }
+        /* Fim [NOVO] */
+
+        .status-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .status-dot.online {
+            background-color: var(--green-light);
+        }
+        .status-dot.offline {
+            background-color: #aaa;
+        }
+        .status-text {
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+        .status-text.online {
+            color: var(--green-dark);
+            font-weight: 600;
+        }
+
+        /* [NOVO] Estilos do Status da Denúncia */
+        .report-status-badge {
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+        .report-status-badge.new {
+            background-color: #fef0f0;
+            color: var(--danger-color);
+        }
+        .report-status-badge.resolved {
+            background-color: #f0fdf4;
+            color: var(--green-dark);
+        }
+        .report-reason-cell {
+            white-space: normal;
+            min-width: 250px;
+        }
+        /* Fim [NOVO] */
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.visible {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        .modal-content h2 {
+            font-family: var(--font-title);
+            font-size: 2rem;
+            color: var(--green-dark);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="email"] {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-family: var(--font-body);
+            font-size: 1rem;
+        }
+        .form-group input[disabled] {
+            background: #f0f0f0;
+            cursor: not-allowed;
+        }
+        .form-group-check {
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-group-check input {
+            width: 18px;
+            height: 18px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+        .modal-user-content {
+            margin-top: 30px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+        .modal-user-content h3 {
+            font-family: var(--font-title);
+            font-size: 1.2rem;
+            color: var(--green-dark);
+            margin-bottom: 15px;
+        }
+        .user-content-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+            background: var(--bg-soft);
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .user-content-list p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+        .user-content-list-item {
+            display: block;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background-color: 0.3s;
+        }
+        .user-content-list-item:hover {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="admin-sidebar">
+        <a href="index.html" class="admin-logo">
+            <i data-lucide="shield"></i> Admin
+        </a>
+        <ul class="admin-nav">
+            <li><a href="#usuarios" class="nav-tab active"><i data-lucide="users"></i> Usuários</a></li>
+            <li><a href="#artigos" class="nav-tab"><i data-lucide="file-text"></i> Artigos</a></li>
+            <li><a href="#ebooks" class="nav-tab"><i data-lucide="book-open"></i> E-books</a></li>
+            <li><a href="#forum" class="nav-tab"><i data-lucide="messages-square"></i> Tópicos do Fórum</a></li>
+            
+            <li>
+                <a href="#denuncias" class="nav-tab">
+                    <i data-lucide="alert-octagon"></i> Denúncias
+                    <span id="reports-badge" class="admin-badge">0</span>
+                </a>
+            </li>
+            <li><a href="index.html" target="_blank"><i data-lucide="home"></i> Ver Site</a></li>
+            <li><a id="logout-btn"><i data-lucide="log-out"></i> Sair</a></li>
+        </ul>
+    </aside>
+
+    <main class="admin-main">
+        
+        <div id="usuarios-panel" class="admin-panel active">
+            <div class="admin-header">
+                <h1>Gerenciamento de Usuários</h1>
+                <div class="admin-search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="user-search-bar" placeholder="Buscar por nome ou e-mail...">
+                </div>
+            </div>
+            <div class="admin-card">
+                <table class="data-table" id="users-table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Nome de Exibição</th>
+                            <th>E-mail</th>
+                            <th>Admin?</th>
+                            <th>ID do Usuário</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" style="text-align: center; padding: 20px;">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="artigos-panel" class="admin-panel">
+            <div class="admin-header">
+                <h1>Gerenciamento de Artigos</h1>
+                <div class="admin-search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="article-search-bar" placeholder="Buscar por título...">
+                </div>
+            </div>
+            <div class="admin-card">
+                <table class="data-table" id="articles-table">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Autor</th>
+                            <th>Likes</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="4" style="text-align: center; padding: 20px;">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="ebooks-panel" class="admin-panel">
+             <div class="admin-header">
+                <h1>Gerenciamento de E-books</h1>
+                <div class="admin-search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="ebook-search-bar" placeholder="Buscar por título...">
+                </div>
+            </div>
+            <div class="admin-card">
+                <table class="data-table" id="ebooks-table">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Autor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="3" style="text-align: center; padding: 20px;">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="forum-panel" class="admin-panel">
+             <div class="admin-header">
+                <h1>Gerenciamento de Tópicos</h1>
+                <div class="admin-search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="topic-search-bar" placeholder="Buscar por título...">
+                </div>
+            </div>
+            <div class="admin-card">
+                <table class="data-table" id="topics-table">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Link</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="3" style="text-align: center; padding: 20px;">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="denuncias-panel" class="admin-panel">
+             <div class="admin-header">
+                <h1>Gerenciamento de Denúncias</h1>
+                <div class="admin-search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="report-search-bar" placeholder="Buscar por motivo ou tipo...">
+                </div>
+            </div>
+            <div class="admin-card">
+                <table class="data-table" id="reports-table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Data</th>
+                            <th>Denunciante</th>
+                            <th>Conteúdo</th>
+                            <th>Motivo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" style="text-align: center; padding: 20px;">Carregando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </main>
+
+    <div id="edit-user-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="modal-close" aria-label="Fechar modal"><i data-lucide="x"></i></button>
+            <h2>Detalhes do Usuário</h2>
+            <form id="edit-user-form">
+                <input type="hidden" id="edit-user-id">
+                <div class="form-group">
+                    <label for="edit-full-name">Nome de Exibição</label>
+                    <input type="text" id="edit-full-name">
+                </div>
+                <div class="form-group">
+                    <label for="edit-email">E-mail</label>
+                    <input type="email" id="edit-email" disabled>
+                </div>
+                 <div class="form-group form-group-check">
+                    <input type="checkbox" id="edit-is-admin" style="width: 20px; height: 20px;">
+                    <label for="edit-is-admin" style="margin: 0; font-weight: bold;">Tornar Administrador?</label>
+                </div>
+
+                <div class="modal-user-content">
+                    <h3>Conteúdo Criado</h3>
+                    
+                    <label style="font-weight: 600; font-size: 0.9em; margin-bottom: 5px;">Artigos:</label>
+                    <div class="user-content-list" id="modal-user-articles">
+                        <p>Carregando...</p>
+                    </div>
+
+                    <label style="font-weight: 600; font-size: 0.9em; margin-top: 15px; margin-bottom: 5px;">E-books:</label>
+                    <div class="user-content-list" id="modal-user-ebooks">
+                        <p>Carregando...</p>
+                    </div>
+
+                    <label style="font-weight: 600; font-size: 0.9em; margin-top: 15px; margin-bottom: 5px;">Tópicos do Fórum:</label>
+                    <div class="user-content-list" id="modal-user-topics">
+                        <p>Carregando...</p>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-edit-btn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script type="module">
+        const { createClient } = supabase;
+        const SUPABASE_URL = 'https://iuyapkycjgmyvxlpycdd.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1eWFwa3ljamdteXZ4bHB5Y2RkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExMTYwODUsImV4cCI6MjA3NjY5MjA4NX0.VlLOoSnNvaWoMFtof6zaLUgWC60bCBJT_ckdI7GRFkM';
+        const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+        let presenceChannel = null; 
+        let onlineUsers = new Set(); 
+        let allProfilesCache = []; 
+
+        function formatTimeAgo(dateString) {
+            if (!dateString) return 'Offline';
+            const date = new Date(dateString);
+            const seconds = Math.floor((new Date() - date) / 1000);
+            
+            let interval = seconds / 31536000;
+            if (interval > 1) return `visto há ${Math.floor(interval)} anos`;
+            interval = seconds / 2592000;
+            if (interval > 1) return `visto há ${Math.floor(interval)} meses`;
+            interval = seconds / 86400;
+            if (interval > 1) return `visto há ${Math.floor(interval)} dias`;
+            interval = seconds / 3600;
+            if (interval > 1) return `visto há ${Math.floor(interval)} horas`;
+            interval = seconds / 60;
+            if (interval > 1) return `visto há ${Math.floor(interval)} min`;
+            return "visto agora";
+        }
+        
+        // [NOVO] Badge de Denúncias
+        async function updateReportsBadge() {
+            const reportsBadge = document.getElementById('reports-badge');
+            if (!reportsBadge) return;
+            
+            const { count, error } = await sb.from('reports')
+                .select('*', { count: 'exact', head: true })
+                .eq('status', 'new');
+                
+            if (!error && count > 0) {
+                reportsBadge.textContent = count;
+                reportsBadge.classList.add('visible');
+            } else {
+                reportsBadge.classList.remove('visible');
+            }
+        }
+        // Fim [NOVO]
+
+        // --- 1. VERIFICAÇÃO DE SEGURANÇA ---
+        async function checkAdminAuth() {
+            const { data: { session }, error: sessionError } = await sb.auth.getSession();
+            if (sessionError || !session) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            
+            const { data: profile, error: profileError } = await sb.from('profiles')
+                .select('is_admin, full_name, avatar_url')
+                .eq('id', session.user.id)
+                .single();
+
+            if (profileError || !profile || !profile.is_admin) {
+                console.error('Falha na verificação de admin:', profileError || 'Usuário não é admin');
+                alert('Acesso negado. Esta página é restrita para administradores.');
+                window.location.href = 'index.html';
+                return null;
+            }
+            return session.user;
+        }
+
+        // --- 2. LÓGICA DE NAVEGAÇÃO DO PAINEL ---
+        const tabLinks = document.querySelectorAll('.nav-tab');
+        const tabPanels = document.querySelectorAll('.admin-panel');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        tabLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const panelId = link.getAttribute('href').substring(1) + '-panel';
+                
+                tabLinks.forEach(l => l.classList.remove('active'));
+                tabPanels.forEach(p => p.classList.remove('active'));
+                
+                link.classList.add('active');
+                const activePanel = document.getElementById(panelId);
+                if (activePanel) {
+                    activePanel.classList.add('active');
+                    loadDataForPanel(panelId); 
+                }
+            });
+        });
+        
+        logoutBtn.addEventListener('click', async () => {
+             if (presenceChannel) await presenceChannel.unsubscribe();
+             await sb.auth.signOut();
+             window.location.href = 'index.html';
+        });
+
+        // --- 3. CARREGAMENTO E RENDERIZAÇÃO DE DADOS ---
+        
+        async function loadDataForPanel(panelId) {
+            switch(panelId) {
+                case 'usuarios-panel':
+                    await loadUsers();
+                    break;
+                case 'artigos-panel':
+                    await loadArticles();
+                    break;
+                case 'ebooks-panel':
+                    await loadEbooks();
+                    break;
+                case 'forum-panel':
+                    await loadTopics();
+                    break;
+                // [NOVO]
+                case 'denuncias-panel':
+                    await loadReports();
+                    break;
+                // Fim [NOVO]
+            }
+        }
+
+        // USUÁRIOS
+        async function loadUsers() {
+            const tableBody = document.querySelector('#users-table tbody');
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Carregando...</td></tr>';
+            
+            const searchTerm = document.getElementById('user-search-bar').value.trim();
+            
+            let query = sb.from('profiles').select('*');
+
+            if (searchTerm) {
+                query = query.or(`full_name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`);
+            }
+            
+            const { data: users, error } = await query;
+            
+            if (error) {
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--danger-color);">Erro ao carregar: ${error.message}</td></tr>`;
+                return;
+            }
+            
+            allProfilesCache = users; 
+            renderUsers(users);
+            renderUserStatus(); 
+            lucide.createIcons();
+        }
+        
+        function renderUsers(users) {
+            const tableBody = document.querySelector('#users-table tbody');
+            if (users.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Nenhum usuário encontrado.</td></tr>';
+                return;
+            }
+            tableBody.innerHTML = users.map(user => `
+                <tr data-user-id="${user.id}">
+                    <td class="status-cell">
+                        <span class="status-dot offline"></span>
+                        <span class="status-text" data-user-id="${user.id}">${formatTimeAgo(user.last_seen)}</span>
+                    </td>
+                    <td>${user.full_name || '<i>Não definido</i>'}</td>
+                    <td>${user.email || '<i>null</i>'}</td>
+                    <td>${user.is_admin ? 'Sim' : 'Não'}</td>
+                    <td><code style="font-size: 0.9em;">${user.id}</code></td>
+                    <td class="actions">
+                        <button class="btn-icon btn-edit edit-user-btn" data-id="${user.id}"><i data-lucide="edit-2"></i></button>
+                        <button class="btn-icon btn-delete delete-user-btn" data-id="${user.id}"><i data-lucide="trash-2"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        async function setupPresence() {
+            presenceChannel = sb.channel('admin-presence');
+            presenceChannel
+                .on('presence', { event: 'sync' }, () => {
+                    onlineUsers.clear();
+                    const newState = presenceChannel.presenceState();
+                    for (const id in newState) {
+                        newState[id].forEach(presence => {
+                            onlineUsers.add(presence.user_id);
+                        });
+                    }
+                    renderUserStatus(); 
+                })
+                .on('presence', { event: 'join' }, ({ key, newPresences }) => {
+                    newPresences.forEach(p => onlineUsers.add(p.user_id));
+                    renderUserStatus();
+                })
+                .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+                    leftPresences.forEach(p => onlineUsers.delete(p.user_id));
+                    renderUserStatus(); 
+                })
+                .subscribe();
+        }
+
+        function renderUserStatus() {
+            const statusCells = document.querySelectorAll('.status-text');
+            statusCells.forEach(cell => {
+                const userId = cell.dataset.userId;
+                const dot = cell.previousElementSibling; 
+                
+                if (onlineUsers.has(userId)) {
+                    cell.textContent = 'Online';
+                    cell.className = 'status-text online';
+                    dot.className = 'status-dot online';
+                } else {
+                    const profile = allProfilesCache.find(p => p.id === userId);
+                    cell.textContent = formatTimeAgo(profile?.last_seen);
+                    cell.className = 'status-text';
+                    dot.className = 'status-dot offline';
+                }
+            });
+        }
+        
+        // ARTIGOS
+        async function loadArticles() {
+            const tableBody = document.querySelector('#articles-table tbody');
+            tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px;">Carregando...</td></tr>';
+            
+            const searchTerm = document.getElementById('article-search-bar').value.trim();
+            let query = sb.from('community-articles').select('*');
+            
+            if (searchTerm) {
+                query = query.ilike('title', `%${searchTerm}%`);
+            }
+            
+            const { data: articles, error } = await query;
+            if (error) { tableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--danger-color);">Erro ao carregar: ${error.message}</td></tr>`; return; }
+            renderArticles(articles);
+            lucide.createIcons();
+        }
+        function renderArticles(articles) {
+            const tableBody = document.querySelector('#articles-table tbody');
+            if (articles.length === 0) { tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 20px;">Nenhum artigo encontrado.</td></tr>'; return; }
+            tableBody.innerHTML = articles.map(article => `
+                <tr>
+                    <td>${article.title}</td>
+                    <td>${article.author_name || '<i>Não definido</i>'}</td>
+                    <td>${article.likes || 0}</td>
+                    <td class="actions">
+                        <a href="comunidade.html?article=${article.id}" target="_blank" class="btn-icon btn-edit" title="Ver Artigo"><i data-lucide="eye"></i></a>
+                        <button class="btn-icon btn-delete delete-article-btn" data-id="${article.id}"><i data-lucide="trash-2"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // E-BOOKS
+        async function loadEbooks() {
+            const tableBody = document.querySelector('#ebooks-table tbody');
+            tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">Carregando...</td></tr>';
+            
+            const searchTerm = document.getElementById('ebook-search-bar').value.trim();
+            let query = sb.from('ebooks').select('*');
+            
+            if (searchTerm) {
+                query = query.ilike('title', `%${searchTerm}%`);
+            }
+
+            const { data: ebooks, error } = await query;
+            if (error) { tableBody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--danger-color);">Erro ao carregar: ${error.message}</td></tr>`; return; }
+            renderEbooks(ebooks);
+            lucide.createIcons();
+        }
+        function renderEbooks(ebooks) {
+            const tableBody = document.querySelector('#ebooks-table tbody');
+             if (ebooks.length === 0) { tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">Nenhum e-book encontrado.</td></tr>'; return; }
+            tableBody.innerHTML = ebooks.map(ebook => `
+                <tr>
+                    <td>${ebook.title}</td>
+                    <td>${ebook.author_name || '<i>Não definido</i>'}</td>
+                    <td class="actions">
+                        <a href="${ebook.pdf_url}" target="_blank" class="btn-icon btn-edit" title="Ver PDF"><i data-lucide="eye"></i></a>
+                        <button class="btn-icon btn-delete delete-ebook-btn" data-id="${ebook.id}"><i data-lucide="trash-2"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // TÓPICOS DO FÓRUM
+        async function loadTopics() {
+            const tableBody = document.querySelector('#topics-table tbody');
+            tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">Carregando...</td></tr>';
+            
+            const searchTerm = document.getElementById('topic-search-bar').value.trim();
+            let query = sb.from('forum_topics').select('*');
+
+            if (searchTerm) {
+                query = query.ilike('title', `%${searchTerm}%`);
+            }
+            
+            const { data: topics, error } = await query;
+            if (error) { tableBody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--danger-color);">Erro ao carregar: ${error.message}</td></tr>`; return; }
+            renderTopics(topics);
+            lucide.createIcons();
+        }
+        function renderTopics(topics) {
+            const tableBody = document.querySelector('#topics-table tbody');
+             if (topics.length === 0) { tableBody.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 20px;">Nenhum tópico encontrado.</td></tr>'; return; }
+            tableBody.innerHTML = topics.map(topic => `
+                <tr>
+                    <td>${topic.title}</td>
+                    <td><a href="${topic.whatsapp_link}" target="_blank">Link do Grupo</a></td>
+                    <td class="actions">
+                        <button class="btn-icon btn-delete delete-topic-btn" data-id="${topic.id}"><i data-lucide="trash-2"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // [NOVO] DENÚNCIAS
+        async function loadReports() {
+            const tableBody = document.querySelector('#reports-table tbody');
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Carregando...</td></tr>';
+            
+            const searchTerm = document.getElementById('report-search-bar').value.trim();
+            let query = sb.from('reports')
+                          .select('*, reporter:profiles(full_name, email)')
+                          .order('created_at', { ascending: false });
+
+            if (searchTerm) {
+                query = query.or(`reason.ilike.%${searchTerm}%,content_type.ilike.%${searchTerm}%`);
+            }
+            
+            const { data: reports, error } = await query;
+            
+            if (error) { 
+                console.error(error);
+                tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--danger-color);">Erro ao carregar: ${error.message}</td></tr>`; 
+                return; 
+            }
+            renderReports(reports);
+            updateReportsBadge(); // Atualiza o contador no badge
+            lucide.createIcons();
+        }
+        function renderReports(reports) {
+            const tableBody = document.querySelector('#reports-table tbody');
+             if (reports.length === 0) { 
+                 tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Nenhuma denúncia encontrada.</td></tr>'; 
+                 return; 
+             }
+            tableBody.innerHTML = reports.map(report => {
+                const reporterName = report.reporter?.full_name || report.reporter?.email || '<i>Usuário deletado</i>';
+                return `
+                <tr data-report-id="${report.id}">
+                    <td><span class="report-status-badge ${report.status}">${report.status}</span></td>
+                    <td>${new Date(report.created_at).toLocaleDateString()}</td>
+                    <td>${reporterName}</td>
+                    <td>
+                        <a href="${report.content_link || '#'}" target="_blank" class="btn-icon btn-edit" title="Ver conteúdo">
+                            <i data-lucide="eye"></i> ${report.content_type}
+                        </a>
+                    </td>
+                    <td class="report-reason-cell">${report.reason}</td>
+                    <td class="actions">
+                        ${report.status === 'new' ? 
+                            `<button class="btn-icon btn-resolve resolve-report-btn" data-id="${report.id}" title="Marcar como Resolvido"><i data-lucide="check-check"></i></button>` : 
+                            ''
+                        }
+                        <button class="btn-icon btn-delete delete-report-btn" data-id="${report.id}" title="Excluir denúncia"><i data-lucide="trash-2"></i></button>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+        // Fim [NOVO]
+        
+        async function loadUserContent(userId) {
+            const articlesList = document.getElementById('modal-user-articles');
+            const ebooksList = document.getElementById('modal-user-ebooks');
+            const topicsList = document.getElementById('modal-user-topics');
+
+            articlesList.innerHTML = "<p>Carregando...</p>";
+            ebooksList.innerHTML = "<p>Carregando...</p>";
+            topicsList.innerHTML = "<p>Carregando...</p>";
+
+            // Carrega Artigos
+            const { data: articles, error: articlesError } = await sb.from('community-articles')
+                .select('id, title')
+                .eq('author_id', userId);
+            if (articles && articles.length > 0) {
+                articlesList.innerHTML = articles.map(a => `<a href="comunidade.html?article=${a.id}" target="_blank" class="user-content-list-item">${a.title}</a>`).join('');
+            } else {
+                articlesList.innerHTML = "<p>Nenhum artigo criado.</p>";
+            }
+
+            // Carrega E-books
+            const { data: ebooks, error: ebooksError } = await sb.from('ebooks')
+                .select('id, title, pdf_url')
+                .eq('author_id', userId);
+            if (ebooks && ebooks.length > 0) {
+                ebooksList.innerHTML = ebooks.map(e => `<a href="${e.pdf_url}" target="_blank" class="user-content-list-item">${e.title}</a>`).join('');
+            } else {
+                ebooksList.innerHTML = "<p>Nenhum e-book criado.</p>";
+            }
+            
+            // Carrega Tópicos do Fórum
+            const { data: topics, error: topicsError } = await sb.from('forum_topics')
+                .select('id, title, whatsapp_link')
+                .eq('created_by', userId);
+            if (topics && topics.length > 0) {
+                topicsList.innerHTML = topics.map(t => `<a href="${t.whatsapp_link}" target="_blank" class="user-content-list-item">${t.title}</a>`).join('');
+            } else {
+                topicsList.innerHTML = "<p>Nenhum tópico criado.</p>";
+            }
+        }
+        
+        // --- 4. LÓGICA DE AÇÕES (DELETAR, EDITAR) ---
+        
+        const editModal = document.getElementById('edit-user-modal');
+        const editForm = document.getElementById('edit-user-form');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        
+        document.body.addEventListener('click', async (e) => {
+            const editUserBtn = e.target.closest('.edit-user-btn');
+            const deleteUserBtn = e.target.closest('.delete-user-btn');
+            const deleteArticleBtn = e.target.closest('.delete-article-btn');
+            const deleteEbookBtn = e.target.closest('.delete-ebook-btn');
+            const deleteTopicBtn = e.target.closest('.delete-topic-btn');
+            const resolveReportBtn = e.target.closest('.resolve-report-btn'); // [NOVO]
+            const deleteReportBtn = e.target.closest('.delete-report-btn'); // [NOVO]
+            
+            if (editUserBtn) {
+                const userId = editUserBtn.dataset.id;
+                const user = allProfilesCache.find(p => p.id === userId);
+                if (user) {
+                    editForm['edit-user-id'].value = user.id;
+                    editForm['edit-full-name'].value = user.full_name || '';
+                    editForm['edit-email'].value = user.email || '';
+                    editForm['edit-is-admin'].checked = user.is_admin;
+                    
+                    loadUserContent(userId);
+                    
+                    editModal.classList.add('visible');
+                }
+            }
+            
+            if (deleteUserBtn) {
+                const userId = deleteUserBtn.dataset.id;
+                const user = allProfilesCache.find(p => p.id === userId);
+                const userName = user?.full_name || user?.email || userId;
+                
+                if (confirm(`TEM CERTEZA?\n\nVocê está prestes a DELETAR PERMANENTEMENTE o usuário:\n${userName}\n\nEsta ação não pode ser desfeita.`)) {
+                    
+                    try {
+                        const { data, error } = await sb.functions.invoke('delete-user', {
+                            body: { user_id_to_delete: userId }
+                        });
+                        
+                        if (error) throw error; 
+                        
+                        alert('Usuário deletado com sucesso.');
+                        loadUsers(); 
+                        
+                    } catch (error) {
+                        console.error('Erro ao chamar Edge Function:', error);
+                        
+                        if (error.context && typeof error.context.json === 'function') {
+                            const functionError = await error.context.json();
+                            alert(`Erro ao deletar: ${functionError.error}`);
+                        } else {
+                            alert(`Erro ao deletar usuário: ${error.message}`);
+                        }
+                    }
+                }
+            }
+            
+            if (deleteArticleBtn) {
+                const articleId = deleteArticleBtn.dataset.id;
+                if (confirm('Tem certeza que quer excluir este artigo? Esta ação é permanente e também deletará os arquivos do armazenamento.')) {
+                    
+                    try {
+                        const { data: article, error: fetchError } = await sb.from('community-articles')
+                            .select('pdfUrl, cover_image_url')
+                            .eq('id', articleId)
+                            .single();
+
+                        if (fetchError) {
+                            alert(`Erro ao buscar dados do artigo: ${fetchError.message}\nO registro do banco será deletado mesmo assim.`);
+                        }
+
+                        if (article) {
+                            let filesToDelete = [];
+                            if (article.pdfUrl) {
+                                try {
+                                    const pdfPath = new URL(article.pdfUrl).pathname.split('/community-articles/')[1];
+                                    if(pdfPath) filesToDelete.push(pdfPath);
+                                } catch(e) { console.warn('URL do PDF inválida', e); }
+                            }
+                            if (article.cover_image_url) {
+                                try {
+                                    const coverPath = new URL(article.cover_image_url).pathname.split('/community-articles/')[1];
+                                    if(coverPath) filesToDelete.push(coverPath);
+                                } catch(e) { console.warn('URL da Capa inválida', e); }
+                            }
+
+                            if (filesToDelete.length > 0) {
+                                const { error: storageError } = await sb.storage.from('community-articles').remove(filesToDelete);
+                                if (storageError && storageError.message !== 'The resource was not found') {
+                                    alert(`Aviso: Erro ao deletar arquivos do storage: ${storageError.message}. O registro do banco será deletado mesmo assim.`);
+                                }
+                            }
+                        }
+
+                        const { error: dbError } = await sb.from('community-articles').delete().eq('id', articleId);
+                        if (dbError) throw dbError;
+
+                        alert('Artigo deletado com sucesso.');
+                        loadArticles(); 
+
+                    } catch (error) {
+                        console.error("Erro no processo de exclusão de artigo:", error);
+                        alert(`Erro ao excluir: ${error.message}`);
+                    }
+                }
+            }
+            
+            if (deleteEbookBtn) {
+                const ebookId = deleteEbookBtn.dataset.id;
+                if (confirm('Tem certeza que quer excluir este e-book? Esta ação é permanente e também deletará os arquivos do armazenamento.')) {
+                    
+                    try {
+                        const { data: ebook, error: fetchError } = await sb.from('ebooks')
+                            .select('pdf_url, cover_image_url')
+                            .eq('id', ebookId)
+                            .single();
+
+                        if (fetchError) {
+                            alert(`Erro ao buscar dados do e-book: ${fetchError.message}\nO registro do banco será deletado mesmo assim.`);
+                        }
+
+                        if (ebook) {
+                            let filesToDelete = [];
+                            if (ebook.pdf_url) {
+                                try {
+                                    const pdfPath = new URL(ebook.pdf_url).pathname.split('/ebooks/')[1];
+                                    if(pdfPath) filesToDelete.push(pdfPath);
+                                } catch(e) { console.warn('URL do PDF inválida', e); }
+                            }
+                            if (ebook.cover_image_url) {
+                                try {
+                                    const coverPath = new URL(ebook.cover_image_url).pathname.split('/ebooks/')[1];
+                                    if(coverPath) filesToDelete.push(coverPath);
+                                } catch(e) { console.warn('URL da Capa inválida', e); }
+                            }
+
+                            if (filesToDelete.length > 0) {
+                                const { error: storageError } = await sb.storage.from('ebooks').remove(filesToDelete);
+                                if (storageError && storageError.message !== 'The resource was not found') {
+                                    alert(`Aviso: Erro ao deletar arquivos do storage: ${storageError.message}. O registro do banco será deletado mesmo assim.`);
+                                }
+                            }
+                        }
+
+                        const { error: dbError } = await sb.from('ebooks').delete().eq('id', ebookId);
+                        if (dbError) throw dbError;
+                        
+                        alert('E-book deletado com sucesso.');
+                        loadEbooks(); 
+
+                    } catch (error) {
+                        console.error("Erro no processo de exclusão de e-book:", error);
+                        alert(`Erro ao excluir: ${error.message}`);
+                    }
+                }
+            }
+            
+            if (deleteTopicBtn) {
+                const topicId = deleteTopicBtn.dataset.id;
+                 if (confirm('Tem certeza que quer excluir este tópico?')) {
+                    const { error } = await sb.from('forum_topics').delete().eq('id', topicId);
+                    if (error) alert(`Erro ao excluir: ${error.message}`);
+                    else loadTopics();
+                 }
+            }
+            
+            // [NOVO] Ações de Denúncia
+            if (resolveReportBtn) {
+                const reportId = resolveReportBtn.dataset.id;
+                if (confirm('Marcar esta denúncia como resolvida?')) {
+                    const { error } = await sb.from('reports')
+                        .update({ status: 'resolved' })
+                        .eq('id', reportId);
+                    if (error) alert(`Erro ao atualizar: ${error.message}`);
+                    else loadReports(); // Recarrega a lista
+                }
+            }
+            
+            if (deleteReportBtn) {
+                const reportId = deleteReportBtn.dataset.id;
+                if (confirm('Tem certeza que quer excluir esta denúncia? (Isso não exclui o conteúdo, apenas a denúncia)')) {
+                    const { error } = await sb.from('reports')
+                        .delete()
+                        .eq('id', reportId);
+                    if (error) alert(`Erro ao excluir: ${error.message}`);
+                    else loadReports(); // Recarrega a lista
+                }
+            }
+            // Fim [NOVO]
+        });
+        
+        // Salvar Edição do Usuário
+        editForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userId = editForm['edit-user-id'].value;
+            const fullName = editForm['edit-full-name'].value;
+            const isAdmin = editForm['edit-is-admin'].checked;
+            
+            const { error } = await sb.from('profiles')
+                .update({ full_name: fullName, is_admin: isAdmin })
+                .eq('id', userId);
+                
+            if (error) {
+                alert(`Erro ao salvar: ${error.message}`);
+            } else {
+                alert('Usuário atualizado com sucesso!');
+                editModal.classList.remove('visible');
+                loadUsers(); 
+            }
+        });
+        
+        cancelEditBtn.addEventListener('click', () => editModal.classList.remove('visible'));
+        closeModalBtn.addEventListener('click', () => editModal.classList.remove('visible'));
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) editModal.classList.remove('visible');
+        });
+
+        // --- 5. INICIALIZAÇÃO ---
+        async function init() {
+            currentUser = await checkAdminAuth(); 
+            if (currentUser) {
+                loadDataForPanel('usuarios-panel'); 
+                setupPresence(); 
+                lucide.createIcons();
+                updateReportsBadge(); // [NOVO] Carrega o badge na inicialização
+
+                document.getElementById('user-search-bar').addEventListener('input', () => loadUsers());
+                document.getElementById('article-search-bar').addEventListener('input', () => loadArticles());
+                document.getElementById('ebook-search-bar').addEventListener('input', () => loadEbooks());
+                document.getElementById('topic-search-bar').addEventListener('input', () => loadTopics());
+                document.getElementById('report-search-bar').addEventListener('input', () => loadReports()); // [NOVO]
+                
+                // [NOVO] Canal de Realtime para denúncias
+                sb.channel('public:reports')
+                  .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, 
+                    (payload) => {
+                        console.log('Mudança nas denúncias detectada!', payload);
+                        updateReportsBadge(); // Atualiza o badge
+                        // Se o admin estiver na aba de denúncias, atualiza a lista
+                        if(document.getElementById('denuncias-panel').classList.contains('active')) {
+                            loadReports();
+                        }
+                    }
+                  )
+                  .subscribe();
+            }
+        }
+        
+        init();
+
+    </script>
+</body>
+</html>
